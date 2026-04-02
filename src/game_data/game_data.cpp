@@ -15,8 +15,7 @@ std::pair<sb *, sb *> game_data::get_boards(const piece_color color) {
 		       : std::pair{&black_board, &white_board};
 }
 
-std::pair<std::array<piece_data, 16> *, std::array<piece_data, 16> *>
-game_data::get_pieces(const piece_color color) {
+std::pair<std::array<piece_data, 16> *, std::array<piece_data, 16> *> game_data::get_pieces(const piece_color color) {
 	return color == piece_color::WHITE
 		       ? std::pair{&white_pieces, &black_pieces}
 		       : std::pair{&black_pieces, &white_pieces};
@@ -176,7 +175,7 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 
 	// get the piece
 	piece_color piece_color{get_color(0x1ULL << pos)};
-	piece_data piece{piece_color ? white_pieces[piece_lookup[pos]] : black_pieces[piece_lookup[pos]]};
+	const piece_data piece{piece_color ? white_pieces[piece_lookup[pos]] : black_pieces[piece_lookup[pos]]};
 
 	switch (piece.type) {
 		case piece_type::PAWN: {
@@ -215,4 +214,70 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 	return output;
 }
 
-void game_data::move(const int old_pos, const int new_pos) {}
+void game_data::move(const int old_pos, const int new_pos, const lookup_tables &lookup_table,
+                     const between_tables &between_table) {
+	// get the piece
+	piece_color piece_color{get_color(0x1ULL << old_pos)};
+	piece_data *piece{piece_color ? &white_pieces[piece_lookup[old_pos]] : &black_pieces[piece_lookup[old_pos]]};
+
+	// remove all prev pins if king moves
+	if (piece->type == piece_type::KING) {
+		// iterate over all arms
+		for (const auto arm: lookup_table.queen_table[sb_to_int(piece->position)]) {
+			// cast out rays
+			piece_data *rayed_piece = ray_cast_x1(arm, *piece);
+			// if there is a piece on the ray, remove any pin
+			if (rayed_piece) { rayed_piece->pinner_id = 255; }
+		}
+	}
+
+	// update captured piece
+	if (piece_lookup[new_pos] != 255) {
+		// get the captured piece (will always be the opposite color)
+		piece_data *captured_piece = piece_color
+			                             ? &black_pieces[piece_lookup[old_pos]]
+			                             : &white_pieces[piece_lookup[old_pos]];
+		captured_piece->reset();
+	}
+
+	// update game_data
+	piece_lookup[old_pos] = 255;
+	piece_lookup[new_pos] = piece->id;
+
+	// update piece
+	piece->position = 0x1ULL << new_pos;
+	piece->attacks = get_valid_moves(new_pos, lookup_table, between_table);
+
+	// update pins
+	auto [friendly_pieces, enemy_pieces]{get_pieces(piece->color)};
+
+	// iterate over all arms for friendly king
+	for (const auto arm: lookup_table.queen_table[sb_to_int((*friendly_pieces)[15].position)]) {
+		// only check arms that have changed
+		if (!(arm & piece->position || arm & (0x1ULL << old_pos))) { continue; }
+		// cast out rays
+		auto [fst, snd] = ray_cast_x2(arm, *piece);
+		// check if the piece could be a pinner
+		if (!snd->is_slider) { continue; }
+		// if the second rayed piece has attacks along arm towards king
+		if (snd->attacks & arm) {
+			// the first rayed piece is pinned
+			fst->pinner_id = snd->id;
+		}
+	}
+
+	// iterate over all arms for enemy king
+	for (const auto arm: lookup_table.queen_table[sb_to_int((*enemy_pieces)[15].position)]) {
+		// only check arms that have changed
+		if (!(arm & piece->position || arm & (0x1ULL << old_pos))) { continue; }
+		// cast out rays
+		auto [fst, snd] = ray_cast_x2(arm, *piece);
+		// check if the piece could be a pinner
+		if (!snd->is_slider) { continue; }
+		// if the second rayed piece has attacks along arm towards king
+		if (snd->attacks & arm) {
+			// the first rayed piece is pinned
+			fst->pinner_id = snd->id;
+		}
+	}
+}

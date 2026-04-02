@@ -27,5 +27,5 @@ public:
 	std::array<piece_data, 16> white_pieces; // the last piece must be king
 	std::array<piece_data, 16> black_pieces; // the last piece must be king
 
-	void move(int old_pos, int new_pos);
+	void move(int old_pos, int new_pos, const lookup_tables &lookup_table, const between_tables &between_table);
 };
