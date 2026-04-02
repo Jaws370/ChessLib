@@ -308,6 +308,8 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 	// update pins
 	auto [friendly_pieces, enemy_pieces]{get_pieces(piece->color)};
 
+	// reminder! all arms must include the current position of the piece so the pins re-update on king move!
+
 	// iterate over all arms for friendly king
 	for (const auto arm: lookup_table.queen_table[sb_to_int((*friendly_pieces)[15].position)]) {
 		// only check arms that have changed

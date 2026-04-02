@@ -1,2 +1,3 @@
-# ChessConsoleProject
-A chess console project based in C++
+# ChessLib
+
+A chess library for a chess game

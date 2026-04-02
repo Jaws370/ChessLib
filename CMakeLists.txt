@@ -1,22 +1,22 @@
 cmake_minimum_required(VERSION 3.10)
-project(ChessConsoleProject)
+project(ChessLib)
 
 # set C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # add source files
-set(SOURCES src/main.cpp src/board/Board.cpp)
+set(SOURCES examples/main.cpp)
 
 # create executable
-add_executable(ChessConsoleProject ${SOURCES})
+add_executable(ChessLib ${SOURCES})
 
 # include header files
-target_include_directories(ChessConsoleProject PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(ChessLib PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # copy assets to build directory if you have any
 add_custom_command(
-        TARGET ChessConsoleProject
+        TARGET ChessLib
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets)
