@@ -42,7 +42,7 @@ piece_data *game_data::ray_cast_x1(const sb arm, const piece_data &piece) {
 		hit_index = 63 - __builtin_clzll(hits);
 	}
 
-	const sb hit_board{0x1ULL << hit_index};
+	const sb hit_board{sb{1} << hit_index};
 
 	// get the pointer of the piece that got hit
 	piece_data *hit_ptr{
@@ -76,7 +76,7 @@ std::pair<piece_data *, piece_data *> game_data::ray_cast_x2(const sb arm, const
 		first_hit_index = 63 - __builtin_clzll(hits);
 	}
 
-	sb hit_board{0x1ULL << first_hit_index};
+	sb hit_board{sb{1} << first_hit_index};
 
 	// get the pointer of the piece that got hit
 	piece_data *first_hit_ptr{
@@ -101,7 +101,7 @@ std::pair<piece_data *, piece_data *> game_data::ray_cast_x2(const sb arm, const
 		second_hit_index = 63 - __builtin_clzll(hits);
 	}
 
-	hit_board = 0x1ULL << second_hit_index;
+	hit_board = sb{1} << second_hit_index;
 
 	// get the pointer of the piece that got hit
 	piece_data *second_hit_ptr{
@@ -231,7 +231,7 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 	sb output{0};
 
 	// get the piece
-	piece_color piece_color{get_color(0x1ULL << pos)};
+	piece_color piece_color{get_color(sb{1} << pos)};
 	const piece_data piece{piece_color ? white_pieces[piece_lookup[pos]] : black_pieces[piece_lookup[pos]]};
 
 	switch (piece.type) {
@@ -274,7 +274,7 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 void game_data::move(const int old_pos, const int new_pos, const lookup_tables &lookup_table,
                      const between_tables &between_table) {
 	// get the piece
-	piece_color piece_color{get_color(0x1ULL << old_pos)};
+	piece_color piece_color{get_color(sb{1} << old_pos)};
 	piece_data *piece{piece_color ? &white_pieces[piece_lookup[old_pos]] : &black_pieces[piece_lookup[old_pos]]};
 
 	// remove all prev pins if king moves
@@ -304,11 +304,11 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 	// update game_data
 	piece_lookup[old_pos] = 255;
 	piece_lookup[new_pos] = piece->id;
-	*friendly_board &= ~(0x1ULL << old_pos);
-	*friendly_board |= 0x1ULL << new_pos;
+	*friendly_board &= ~(sb{1} << old_pos);
+	*friendly_board |= sb{1} << new_pos;
 
 	// update piece
-	piece->position = 0x1ULL << new_pos;
+	piece->position = sb{1} << new_pos;
 	piece->attacks = get_valid_moves(new_pos, lookup_table, between_table);
 
 	// update pins
@@ -319,7 +319,7 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 	// iterate over all arms for friendly king
 	for (const auto arm: lookup_table.queen_table[sb_to_int((*friendly_pieces)[15].position)]) {
 		// only check arms that have changed
-		if (!(arm & piece->position || arm & (0x1ULL << old_pos))) { continue; }
+		if (!(arm & piece->position || arm & (sb{1} << old_pos))) { continue; }
 		// cast out rays
 		auto [fst, snd] = ray_cast_x2(arm, *piece);
 		// check if the piece could be a pinner
@@ -334,7 +334,7 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 	// iterate over all arms for enemy king
 	for (const auto arm: lookup_table.queen_table[sb_to_int((*enemy_pieces)[15].position)]) {
 		// only check arms that have changed
-		if (!(arm & piece->position || arm & (0x1ULL << old_pos))) { continue; }
+		if (!(arm & piece->position || arm & (sb{1} << old_pos))) { continue; }
 		// cast out rays
 		auto [fst, snd] = ray_cast_x2(arm, *piece);
 		// check if the piece could be a pinner

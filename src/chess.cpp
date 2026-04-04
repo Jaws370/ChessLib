@@ -1,7 +1,8 @@
 #include "../include/chess.h"
 
-#include <ios>
+#include <iostream>
 #include <unordered_map>
+#include <bits/ostream.tcc>
 
 void chess::set_game_data(const std::string &fen) {
 	std::array<uint8_t, 12> b_boards{};
@@ -27,7 +28,7 @@ void chess::set_game_data(const std::string &fen) {
 		board += piece_lookup[std::toupper(c)];
 
 		// adds the piece to bit board
-		b_boards[board] |= 0x1ULL << pos;
+		b_boards[board] |= sb{1} << pos;
 
 		pos++;
 	}
@@ -43,32 +44,32 @@ void chess::set_game_data(const std::string &fen) {
 		// if i >= 6, this is a white board else black
 		if (i >= 6) {
 			// set color board, color pieces, and piece_lookup
-			gd.white_board |= 0x1ULL << b_pos;
+			gd.white_board |= sb{1} << b_pos;
 			gd.piece_lookup[b_pos] = white_piece_count;
 
 			// king must go last
 			if (i == 11) {
-				gd.white_pieces[15] = piece_data(0x1ULL << b_pos, static_cast<piece_type>(i - 6),
+				gd.white_pieces[15] = piece_data(sb{1} << b_pos, static_cast<piece_type>(i - 6),
 				                                 piece_color::WHITE, 15);
 				continue;
 			}
 
-			gd.white_pieces[white_piece_count] = piece_data(0x1ULL << b_pos, static_cast<piece_type>(i - 6),
+			gd.white_pieces[white_piece_count] = piece_data(sb{1} << b_pos, static_cast<piece_type>(i - 6),
 			                                                piece_color::WHITE, white_piece_count);
 			white_piece_count++;
 		} else {
 			// set color board, color pieces, and piece_lookup
-			gd.black_board |= 0x1ULL << b_pos;
+			gd.black_board |= sb{1} << b_pos;
 			gd.piece_lookup[b_pos] = black_piece_count;
 
 			// king must go last
 			if (i == 5) {
-				gd.black_pieces[15] = piece_data(0x1ULL << b_pos, static_cast<piece_type>(i),
+				gd.black_pieces[15] = piece_data(sb{1} << b_pos, static_cast<piece_type>(i),
 				                                 piece_color::WHITE, 15);
 				continue;
 			}
 
-			gd.black_pieces[black_piece_count] = piece_data(0x1ULL << b_pos, static_cast<piece_type>(i),
+			gd.black_pieces[black_piece_count] = piece_data(sb{1} << b_pos, static_cast<piece_type>(i),
 			                                                piece_color::BLACK, black_piece_count);
 			black_piece_count++;
 		}
@@ -80,7 +81,7 @@ void chess::table_init() {
 
 	// generate all the arms starting left then going clockwise
 	for (int i{0}; i < 64; i++) {
-		const sb pos{0x1ULL << i};
+		const sb pos{sb{1} << i};
 		constexpr std::array directions{1, 9, 8, 7, -1, -9, -8, -7};
 
 		// edge masks
@@ -149,7 +150,7 @@ void chess::table_init() {
 
 	// knight lookup table
 	for (int i{0}; i < 64; i++) {
-		const sb pos{0x1ULL << i};
+		const sb pos{sb{1} << i};
 
 		// edge masks
 		constexpr sb top_edge{0xFFFF000000000000ULL};
@@ -180,7 +181,7 @@ void chess::table_init() {
 
 	// king lookup table
 	for (int i{0}; i < 64; i++) {
-		const sb pos{0x1ULL << i};
+		const sb pos{sb{1} << i};
 
 		for (int j{0}; j < 8; j++) {
 			// directions of movement
@@ -209,11 +210,11 @@ void chess::table_init() {
 
 	// between table
 	for (int i{0}; i < 64; i++) {
-		const sb pos1 = 0x1ULL << i;
+		const sb pos1 = sb{1} << i;
 		for (int j{0}; j < 64; j++) {
 			if (i == j) { continue; }
 
-			const sb pos2 = 0x1ULL << j;
+			const sb pos2 = sb{1} << j;
 
 			// if already filled, continue
 			if (between_table[i][j] != 0) { continue; }
@@ -229,6 +230,147 @@ void chess::table_init() {
 			}
 		}
 	}
+}
+
+bool chess::check_move(const int old_pos, const int new_pos) {
+	const sb valid_moves = gd.get_valid_moves(old_pos, lookup_table, between_table);
+	const sb b_new_pos = sb{1} << new_pos;
+
+	if (valid_moves & b_new_pos) { return true; }
+
+	return false;
+}
+
+int chess::minimax(game_data pseudo_gd, const int depth, const bool is_maximizing) {
+	if (depth == 0) {
+		// || is_check_mate(); )
+		return pseudo_gd.evaluate_position();
+	}
+
+	if (is_maximizing) {
+		int best_score{INT_MIN};
+
+		while (pseudo_gd.white_board) {
+			const int piece_index = __builtin_ctzll(pseudo_gd.white_board);
+			sb valid_moves = pseudo_gd.get_valid_moves(piece_index, lookup_table, between_table);
+
+			// go through all valid moves for the piece
+			while (valid_moves) {
+				const int move_index = __builtin_ctzll(valid_moves);
+				game_data new_pseudo_gd = pseudo_gd;
+
+				new_pseudo_gd.move(piece_index, move_index, lookup_table, between_table);
+
+				// check if the new move is good
+				const int result = minimax(new_pseudo_gd, depth - 1, false);
+				best_score = std::max(best_score, result);
+
+				valid_moves &= ~(sb{1} << move_index);
+			}
+
+			pseudo_gd.white_board &= ~(sb{1} << piece_index);
+		}
+
+		return best_score;
+	} else {
+		int best_score{INT_MAX};
+
+		while (pseudo_gd.black_board) {
+			const int piece_index = __builtin_ctzll(pseudo_gd.black_board);
+			sb valid_moves = pseudo_gd.get_valid_moves(piece_index, lookup_table, between_table);
+
+			// go through all valid moves for the piece
+			while (valid_moves) {
+				const int move_index = __builtin_ctzll(valid_moves);
+				game_data new_pseudo_gd = pseudo_gd;
+
+				new_pseudo_gd.move(piece_index, move_index, lookup_table, between_table);
+
+				// check if the new move is good
+				const int result = minimax(new_pseudo_gd, depth - 1, true);
+				best_score = std::min(best_score, result);
+
+				valid_moves &= ~(sb{1} << move_index);
+			}
+
+			pseudo_gd.black_board &= ~(sb{1} << piece_index);
+		}
+
+		return best_score;
+	}
+}
+
+void chess::ai_move(const int depth) {
+	bool is_maximizing{false};
+
+	if (p2_color == piece_color::WHITE) { is_maximizing = true; }
+
+	game_data pseudo_gd = gd;
+	std::pair<int, int> best_move{-1, -1};
+
+	if (is_maximizing) {
+		// get the best move
+		int best_score{INT_MIN};
+
+		while (pseudo_gd.white_board) {
+			const int piece_index = __builtin_ctzll(pseudo_gd.white_board);
+			sb valid_moves = pseudo_gd.get_valid_moves(piece_index, lookup_table, between_table);
+
+			// go through all valid moves for the piece
+			while (valid_moves) {
+				const int move_index = __builtin_ctzll(valid_moves);
+				game_data new_pseudo_gd = pseudo_gd;
+
+				new_pseudo_gd.move(piece_index, move_index, lookup_table, between_table);
+
+				// check if the new move is good
+				const int result = minimax(new_pseudo_gd, depth - 1, false);
+				if (result > best_score) {
+					best_move = std::make_pair(piece_index, move_index);
+					best_score = result;
+				}
+
+				valid_moves &= ~(sb{1} << move_index);
+			}
+
+			pseudo_gd.white_board &= ~(sb{1} << piece_index);
+		}
+	} else {
+		// get the best move
+		int best_score{INT_MAX};
+
+		while (pseudo_gd.black_board) {
+			const int piece_index = __builtin_ctzll(pseudo_gd.black_board);
+			sb valid_moves = pseudo_gd.get_valid_moves(piece_index, lookup_table, between_table);
+
+			// go through all valid moves for the piece
+			while (valid_moves) {
+				const int move_index = __builtin_ctzll(valid_moves);
+				game_data new_pseudo_gd = pseudo_gd;
+
+				new_pseudo_gd.move(piece_index, move_index, lookup_table, between_table);
+
+				// check if the new move is good
+				const int result = minimax(new_pseudo_gd, depth - 1, true);
+				if (result < best_score) {
+					best_move = std::make_pair(piece_index, move_index);
+					best_score = result;
+				}
+
+				valid_moves &= ~(sb{1} << move_index);
+			}
+
+			pseudo_gd.black_board &= ~(sb{1} << piece_index);
+		}
+	}
+
+	// make the best move
+	if (best_move.first == -1 || best_move.second == -1) {
+		std::cerr << "AI ERROR: NO BEST MOVE FOUND" << std::endl;
+		return;
+	}
+
+	move(best_move.first, best_move.second);
 }
 
 chess::chess(const std::string &fen) {
