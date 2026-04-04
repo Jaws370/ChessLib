@@ -1,4 +1,4 @@
-#include "game_data.h"
+#include "../include/game_data.h"
 
 #include <algorithm>
 #include <span>
@@ -288,18 +288,24 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 		}
 	}
 
+	// get boards
+	auto [friendly_board, enemy_board] = get_boards(piece->color);
+
 	// update captured piece
 	if (piece_lookup[new_pos] != 255) {
 		// get the captured piece (will always be the opposite color)
 		piece_data *captured_piece = piece_color
 			                             ? &black_pieces[piece_lookup[old_pos]]
 			                             : &white_pieces[piece_lookup[old_pos]];
+		*enemy_board &= ~captured_piece->position;
 		captured_piece->reset();
 	}
 
 	// update game_data
 	piece_lookup[old_pos] = 255;
 	piece_lookup[new_pos] = piece->id;
+	*friendly_board &= ~(0x1ULL << old_pos);
+	*friendly_board |= 0x1ULL << new_pos;
 
 	// update piece
 	piece->position = 0x1ULL << new_pos;
@@ -339,4 +345,14 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 			fst->pinner_id = snd->id;
 		}
 	}
+}
+
+int game_data::evaluate_position() const {
+	int eval = 0;
+	// count up material
+	for (const auto &piece: white_pieces) { eval += piece.value; }
+
+	for (const auto &piece: black_pieces) { eval -= piece.value; }
+
+	return eval;
 }

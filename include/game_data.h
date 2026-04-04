@@ -1,10 +1,8 @@
 #pragma once
 
-#include "types/types.h"
+#include "types.h"
 
 class game_data {
-	sb get_valid_moves(int pos, const lookup_tables &lookup_table, const between_tables &between_table);
-
 	sb pawn_logic(const piece_data &piece);
 	sb king_logic(const piece_data &piece, int pos, const lookup_tables &lookup_table);
 	sb slider_logic(const piece_data &piece, const lookup_tables &lookup_table,
@@ -27,5 +25,10 @@ public:
 	std::array<piece_data, 16> white_pieces; // the last piece must be king
 	std::array<piece_data, 16> black_pieces; // the last piece must be king
 
+	game_data(): white_board(0), black_board(0), piece_lookup(), white_pieces(), black_pieces() {} ;
+
+	int evaluate_position() const;
+
+	sb get_valid_moves(int pos, const lookup_tables &lookup_table, const between_tables &between_table);
 	void move(int old_pos, int new_pos, const lookup_tables &lookup_table, const between_tables &between_table);
 };

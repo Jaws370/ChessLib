@@ -25,17 +25,78 @@ struct piece_data {
 	uint8_t id; // the position of the piece in the piece arrays
 	uint8_t pinner_id; // the id if the piece pinning this piece... 255 if no pin
 	bool is_slider;
+	int value;
 
-	piece_data() : position(0), attacks(0), type(piece_type::EMPTY), color(piece_color::NONE), id(0),
-	               pinner_id(255), is_slider(false) {}
+	piece_data(const uint64_t position, const piece_type type, const piece_color color,
+	           const uint8_t id) : position(position), attacks(0), type(type), color(color), id(id),
+	                               pinner_id(255), is_slider(false), value(0) {
+		if (type == piece_type::BISHOP || type == piece_type::ROOK || type == piece_type::QUEEN) { is_slider = true; }
 
-	void set(const piece_type type, const piece_color color, const uint8_t id) {
-		attacks = position = 0;
+		switch (type) {
+			case piece_type::PAWN: {
+				value = 1;
+				break;
+			}
+			case piece_type::BISHOP: {
+				value = 3;
+				is_slider = true;
+				break;
+			}
+			case piece_type::KNIGHT: {
+				value = 3;
+				break;
+			}
+			case piece_type::ROOK: {
+				value = 5;
+				is_slider = true;
+				break;
+			}
+			case piece_type::QUEEN: {
+				value = 8;
+				is_slider = true;
+				break;
+			}
+			default: break;
+		}
+
+		// todo somehow set the attacks of all pieces after init
+	}
+
+	void set(const uint64_t position, const piece_type type, const piece_color color, const uint8_t id) {
+		attacks = 0;
+		this->position = position;
 		this->type = type;
 		this->color = color;
 		this->id = id;
 
 		if (type == piece_type::BISHOP || type == piece_type::ROOK || type == piece_type::QUEEN) { is_slider = true; }
+
+		switch (type) {
+			case piece_type::PAWN: {
+				value = 1;
+				break;
+			}
+			case piece_type::BISHOP: {
+				value = 3;
+				is_slider = true;
+				break;
+			}
+			case piece_type::KNIGHT: {
+				value = 3;
+				break;
+			}
+			case piece_type::ROOK: {
+				value = 5;
+				is_slider = true;
+				break;
+			}
+			case piece_type::QUEEN: {
+				value = 8;
+				is_slider = true;
+				break;
+			}
+			default: break;
+		}
 	}
 
 	void reset() {
@@ -44,6 +105,7 @@ struct piece_data {
 		color = piece_color::NONE;
 		pinner_id = 255;
 		is_slider = false;
+		value = 0;
 	}
 };
 
