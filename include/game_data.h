@@ -21,9 +21,9 @@ class game_data {
 	std::pair<std::array<piece_data, 16> *, std::array<piece_data, 16> *> get_pieces(piece_color color);
 
 public:
-	sb white_board;
-	sb black_board;
-	std::array<uint8_t, 64> piece_lookup;
+	sb white_board{};
+	sb black_board{};
+	std::array<uint8_t, 64> piece_lookup{};
 	std::array<piece_data, 16> white_pieces; // the last piece must be king
 	std::array<piece_data, 16> black_pieces; // the last piece must be king
 

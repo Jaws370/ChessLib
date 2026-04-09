@@ -14,19 +14,19 @@ void chess::table_init() {
 		// edge masks
 		constexpr sb top_edge{0xFF00000000000000ULL};
 		constexpr sb bottom_edge{0x00000000000000FFULL};
-		constexpr sb right_edge{0x8080808080808080ULL};
-		constexpr sb left_edge{0x0101010101010101ULL};
+		constexpr sb left_edge{0x8080808080808080ULL};
+		constexpr sb right_edge{0x0101010101010101ULL};
 		sb edges{top_edge | bottom_edge | right_edge | left_edge};
 
-		std::array<int, 8> direction_skip_set{0};
+		std::array<int, 8> direction_skip_set{};
 
 		if (pos & top_edge) {
-			edges &= ~top_edge;
+			edges &= ~(top_edge & ~0x8100000000000000ULL);
 			direction_skip_set[1] = direction_skip_set[2] = direction_skip_set[3] = 1;
 		}
 
 		if (pos & bottom_edge) {
-			edges &= ~bottom_edge;
+			edges &= ~(bottom_edge & ~0x0000000000000081ULL);
 			direction_skip_set[5] = direction_skip_set[6] = direction_skip_set[7] = 1;
 		}
 
@@ -117,8 +117,8 @@ void chess::table_init() {
 			// edge masks
 			constexpr sb top_edge{0xFF00000000000000ULL};
 			constexpr sb bottom_edge{0x00000000000000FFULL};
-			constexpr sb right_edge{0x8080808080808080ULL};
-			constexpr sb left_edge{0x0101010101010101ULL};
+			constexpr sb left_edge{0x8080808080808080ULL};
+			constexpr sb right_edge{0x0101010101010101ULL};
 
 			// if on the left, skip index 0 and 3 and 7
 			if ((pos & left_edge) && (j == 0 || j == 3 || j == 7)) { continue; }
@@ -306,7 +306,7 @@ chess::chess(const std::string &fen): gd(fen) {
 
 	// randomly assign colors
 	std::mt19937 rng(std::random_device{}());
-	std::uniform_int_distribution<int> dist(0, 1);
+	std::uniform_int_distribution dist(0, 1);
 	int color = dist(rng);
 
 	p1_color = static_cast<piece_color>(color);

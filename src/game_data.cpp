@@ -177,7 +177,7 @@ sb game_data::king_logic(const piece_data &piece, const int pos, const lookup_ta
 	}
 
 	// remove attacked squares from possible moves
-	output &= attack_board;
+	output &= ~attack_board;
 
 	// remove own pieces
 	output &= ~*friendly_board;
@@ -391,7 +391,7 @@ std::string game_data::get() const {
 				piece_color == piece_color::WHITE ? white_pieces[piece_lookup[i]] : black_pieces[piece_lookup[i]]
 			};
 
-			constexpr char piece_chars[] = {'P', 'N', 'B', 'R', 'Q', 'K'};
+			constexpr char piece_chars[] = {'P', 'B', 'N', 'R', 'Q', 'K'};
 
 			// dictionary for piece characters
 			char c{piece_chars[static_cast<int>(piece.type)]};
@@ -420,7 +420,7 @@ void game_data::set(const std::string &fen) {
 	std::array<sb, 12> b_boards{};
 
 	// dictionary for piece characters
-	std::unordered_map<char, int> char_lookup{{'P', 0}, {'N', 1}, {'B', 2}, {'R', 3}, {'Q', 4}, {'K', 5}};
+	std::unordered_map<char, int> char_lookup{{'P', 0}, {'B', 1}, {'N', 2}, {'R', 3}, {'Q', 4}, {'K', 5}};
 
 	// loop through fen string
 	int pos{63};
