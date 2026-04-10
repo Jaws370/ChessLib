@@ -220,8 +220,8 @@ sb game_data::slider_logic(const piece_data &piece, const lookup_tables &lookup_
 		}
 		const piece_data hit = *hit_ptr;
 		// create the possible move set as being the moves between the two positions (first removed, last sometimes)
-		output = between_table[sb_to_int(piece.position)][sb_to_int(hit.position)] & ~(
-			         piece.position | (piece.color == hit.color ? hit.position : 0x0ULL));
+		output |= between_table[sb_to_int(piece.position)][sb_to_int(hit.position)] & ~(
+			piece.position | (piece.color == hit.color ? hit.position : 0x0ULL));
 	}
 
 	return output;

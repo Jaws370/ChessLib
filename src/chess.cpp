@@ -139,19 +139,21 @@ void chess::table_init() {
 	for (int i{0}; i < 64; i++) {
 		const sb pos1 = sb{1} << i;
 		for (int j{0}; j < 64; j++) {
-			if (i == j) { continue; }
-
+			if (i == j) continue;
 			const sb pos2 = sb{1} << j;
-
-			// if already filled, continue
-			if (between_table[i][j] != 0) { continue; }
-
-			// can take an arm at the first pos and then the same arm at the second and subtract
 			for (int k{0}; k < 8; k++) {
+				// if this arm contains pos2
 				if (default_table[i][k] & pos2) {
-					between_table[i][j] = default_table[i][k] & ~default_table[j][k];
-					between_table[i][j] |= pos1 | pos2;
-					between_table[j][i] = between_table[i][j];
+					sb between_result = 0;
+					// check all the arms from pos2
+					for (int m{0}; m < 8; m++) {
+						// if arm contains pos1
+						if (default_table[j][m] & pos1) {
+							between_result = default_table[i][k] & default_table[j][m];
+							break;
+						}
+					}
+					between_table[i][j] = between_result | pos1 | pos2;
 					break;
 				}
 			}

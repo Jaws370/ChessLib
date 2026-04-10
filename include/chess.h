@@ -29,11 +29,11 @@ public:
 
 	sb get_table_lookup(const int pos) const {
 		sb result = 0;
-		for (int i = 0; i < 4; i++) result |= lookup_table.bishop_table[pos][i];
+		for (int i = 0; i < 8; i++) result |= lookup_table.queen_table[pos][i];
 		return result;
 	}
 
-	sb get_between_table(int pos1, int pos2) const { return between_table[pos1][pos2]; }
+	sb get_between_table(const int pos1, const int pos2) const { return between_table[pos1][pos2]; }
 
 	void set_board(const std::string &fen) { gd.set(fen); };
 	std::string get_board() const { return gd.get(); };
