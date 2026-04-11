@@ -20,17 +20,23 @@ class game_data {
 	std::pair<sb *, sb *> get_boards(piece_color color);
 	std::pair<std::array<piece_data, 16> *, std::array<piece_data, 16> *> get_pieces(piece_color color);
 
+	void update_attack_boards(const lookup_tables &lookup_table, const between_tables &between_table);
+	void update_pins(auto &piece_set, const auto &table);
+
 public:
 	sb white_board{};
 	sb black_board{};
 	std::array<uint8_t, 64> piece_lookup{};
 	std::array<piece_data, 16> white_pieces; // the last piece must be king
 	std::array<piece_data, 16> black_pieces; // the last piece must be king
+	std::array<sb, 2> side_attacks{};
 
-	explicit game_data(const std::string &fen) { set(fen); }
+	explicit game_data(const std::string &fen, const lookup_tables &lookup_table, const between_tables &between_table) {
+		set(fen, lookup_table, between_table);
+	}
 
 	std::string get() const;
-	void set(const std::string &fen);
+	void set(const std::string &fen, const lookup_tables &lookup_table, const between_tables &between_table);
 
 	int evaluate_position() const;
 

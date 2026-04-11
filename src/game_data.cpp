@@ -151,30 +151,12 @@ sb game_data::king_logic(const piece_data &piece, const int pos, const lookup_ta
 	// use the lookup table for init
 	sb output{lookup_table.king_table[pos][0]};
 
-	auto [friendly_board, enemy_board]{get_boards(piece.color)};
-	auto [friendly_pieces, enemy_pieces]{get_pieces(piece.color)};
+	// get precomputed attack boards
+	const sb attack_board = piece.color == piece_color::WHITE
+		                        ? side_attacks[static_cast<int>(piece_color::BLACK)]
+		                        : side_attacks[static_cast<int>(piece_color::WHITE)];
 
-	sb attack_board{0};
-
-	// get attack board
-	for (const auto &enemy_piece: *enemy_pieces) {
-		// if the enemy piece is attacking the king
-		if (enemy_piece.attacks & piece.position) {
-			// if the piece is a slider
-			if (piece.is_slider) {
-				// find the arm containing the king
-				for (const auto &arm: lookup_table.queen_table[sb_to_int(enemy_piece.position)]) {
-					// if the arm contains the king (only one arm can contain the king)
-					if (arm & piece.position) {
-						output &= ~arm;
-						break;
-					}
-				}
-			}
-		}
-		// add this piece's attacks to the attack board
-		attack_board |= enemy_piece.attacks;
-	}
+	auto [friendly_board, enemy_board] = get_boards(piece.color);
 
 	// remove attacked squares from possible moves
 	output &= ~attack_board;
@@ -227,6 +209,77 @@ sb game_data::slider_logic(const piece_data &piece, const lookup_tables &lookup_
 	return output;
 }
 
+void game_data::update_attack_boards(const lookup_tables &lookup_table, const between_tables &between_table) {
+	side_attacks[static_cast<int>(piece_color::WHITE)] = side_attacks[static_cast<int>(piece_color::BLACK)] = 0;
+
+	for (int i{0}; i < 64; i++) {
+		if (piece_lookup[i] == 255) { continue; }
+
+		const piece_color piece_color{get_color(sb{1} << i)};
+		piece_data &piece{
+			piece_color == piece_color::WHITE ? white_pieces[piece_lookup[i]] : black_pieces[piece_lookup[i]]
+		};
+
+		piece.attacks = 0;
+
+		auto slider_attacks = [&](const auto &table) {
+			for (const auto &arm: table) {
+				const piece_data *hit_ptr = ray_cast_x1(arm, piece);
+
+				if (!hit_ptr) {
+					piece.attacks |= arm;
+					continue;
+				}
+
+				if (hit_ptr->type == piece_type::KING && hit_ptr->color != piece.color) {
+					auto [_, temp_hit_ptr] = ray_cast_x2(arm, piece);
+					if (!temp_hit_ptr) {
+						piece.attacks |= arm;
+						continue;
+					}
+					hit_ptr = temp_hit_ptr;
+				}
+
+				piece.attacks |= between_table[sb_to_int(piece.position)][sb_to_int(hit_ptr->position)] & ~piece.
+						position;
+			}
+		};
+
+		switch (piece.type) {
+			case piece_type::PAWN: {
+				piece.attacks = piece_color == piece_color::WHITE
+					                ? (sb{piece.position} << 7 | sb{piece.position} << 9)
+					                : (sb{piece.position} >> 7 | sb{piece.position} >> 9);
+				break;
+			}
+			case piece_type::KNIGHT: {
+				piece.attacks = lookup_table.knight_table[sb_to_int(piece.position)][0];
+				break;
+			}
+			case piece_type::BISHOP: {
+				slider_attacks(lookup_table.bishop_table[sb_to_int(piece.position)]);
+				break;
+			}
+			case piece_type::ROOK: {
+				slider_attacks(lookup_table.rook_table[sb_to_int(piece.position)]);
+				break;
+			}
+			case piece_type::QUEEN: {
+				slider_attacks(lookup_table.queen_table[sb_to_int(piece.position)]);
+				break;
+			}
+			case piece_type::KING: {
+				piece.attacks = lookup_table.king_table[sb_to_int(piece.position)][0];
+				break;
+			}
+			default: { break; }
+		}
+
+		// update side_attacks
+		side_attacks[static_cast<int>(piece.color)] |= piece.attacks;
+	}
+}
+
 sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, const between_tables &between_table) {
 	sb output{0};
 
@@ -267,7 +320,9 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 		const piece_data &pinner{(*friendly_pieces)[piece.pinner_id]};
 
 		// because we can guarantee being pinned, valid moves must only be on the line between pinner and king
-		output &= between_table[sb_to_int(pinner.position)][sb_to_int((*friendly_pieces)[15].position)];
+		if ((*friendly_pieces)[15].position != 0) {
+			output &= between_table[sb_to_int(pinner.position)][sb_to_int((*friendly_pieces)[15].position)];
+		}
 	}
 
 	return output;
@@ -313,42 +368,17 @@ void game_data::move(const int old_pos, const int new_pos, const lookup_tables &
 
 	// update piece
 	piece->position = sb{1} << new_pos;
-	piece->attacks = get_valid_moves(new_pos, lookup_table, between_table);
+
+	// update attacks
+	update_attack_boards(lookup_table, between_table);
 
 	// update pins
 	auto [friendly_pieces, enemy_pieces]{get_pieces(piece->color)};
 
 	// reminder! all arms must include the current position of the piece so the pins re-update on king move!
 
-	// iterate over all arms for friendly king
-	for (const auto arm: lookup_table.queen_table[sb_to_int((*friendly_pieces)[15].position)]) {
-		// only check arms that have changed
-		if (!(arm & piece->position || arm & (sb{1} << old_pos))) { continue; }
-		// cast out rays
-		auto [fst, snd] = ray_cast_x2(arm, *piece);
-		// check if the piece could be a pinner
-		if (!snd->is_slider) { continue; }
-		// if the second rayed piece has attacks along arm towards king
-		if (snd->attacks & arm) {
-			// the first rayed piece is pinned
-			fst->pinner_id = snd->id;
-		}
-	}
-
-	// iterate over all arms for enemy king
-	for (const auto arm: lookup_table.queen_table[sb_to_int((*enemy_pieces)[15].position)]) {
-		// only check arms that have changed
-		if (!(arm & piece->position || arm & (sb{1} << old_pos))) { continue; }
-		// cast out rays
-		auto [fst, snd] = ray_cast_x2(arm, *piece);
-		// check if the piece could be a pinner
-		if (!snd->is_slider) { continue; }
-		// if the second rayed piece has attacks along arm towards king
-		if (snd->attacks & arm) {
-			// the first rayed piece is pinned
-			fst->pinner_id = snd->id;
-		}
-	}
+	update_pins(*friendly_pieces, lookup_table);
+	update_pins(*enemy_pieces, lookup_table);
 }
 
 int game_data::evaluate_position() const {
@@ -409,7 +439,13 @@ std::string game_data::get() const {
 }
 
 
-void game_data::set(const std::string &fen) {
+void game_data::set(const std::string &fen, const lookup_tables &lookup_table, const between_tables &between_table) {
+	// reset all old data
+	white_board = 0;
+	black_board = 0;
+	white_pieces = {};
+	black_pieces = {};
+	std::fill(piece_lookup.begin(), piece_lookup.end(), 255);
 	// reset all old data
 	white_board = 0;
 	black_board = 0;
@@ -492,6 +528,30 @@ void game_data::set(const std::string &fen) {
 			}
 
 			b_boards[i] &= ~(sb{1} << b_pos);
+		}
+	}
+
+	update_attack_boards(lookup_table, between_table);
+
+	update_pins(white_pieces, lookup_table);
+	update_pins(black_pieces, lookup_table);
+}
+
+void game_data::update_pins(auto &piece_set, const auto &table) {
+	// iterate over all arms for the king
+	if (piece_set[15].position != 0) {
+		for (const auto arm: table.queen_table[sb_to_int(piece_set[15].position)]) {
+			// cast out rays
+			auto [fst, snd] = ray_cast_x2(arm, piece_set[15]);
+			// continue of not enough pieces on the arm
+			if (!snd || !fst) { continue; }
+			// check if the piece could be a pinner
+			if (!snd->is_slider || snd->color == piece_color::BLACK) { continue; }
+			// if the second rayed piece has attacks along arm towards king
+			if (snd->attacks & arm) {
+				// the first rayed piece is pinned
+				fst->pinner_id = snd->id;
+			}
 		}
 	}
 }

@@ -1152,7 +1152,7 @@ int main() {
 
 	game.set_board("8/8/8/3PPn2/3PKb2/3qpr2/8/8");
 	test_name = "white king e4, friendly on d4/d5/e5, enemies on f5/f4/f3/e3/d3";
-	correct_board = 0x00000004041C0000ULL;
+	correct_board = 0x0000000000140000ULL;
 	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
 		failed_tests += test_name + "\n";
 	}
@@ -1160,7 +1160,7 @@ int main() {
 
 	game.set_board("8/8/2p1pp2/2p1kR2/2B1NQ2/8/8/8");
 	test_name = "black king d5, friendly on c5/d6/e6/c6, enemies on e5/e4/d4/c4";
-	correct_board = 0x000010141C000000ULL;
+	correct_board = 0x0000000010000000ULL;
 	if (test_valid_moves(game.get_valid_moves(35), correct_board, test_name)) { passed++; } else {
 		failed_tests += test_name + "\n";
 	}
@@ -1168,7 +1168,7 @@ int main() {
 
 	game.set_board("8/8/8/6Pq/6PK/6nr/8/8");
 	test_name = "white king h4, friendly on g4/g5, enemies on g3/h3/h5";
-	correct_board = 0x0000000100030000ULL;
+	correct_board = 0x0000000000000000ULL;
 	if (test_valid_moves(game.get_valid_moves(24), correct_board, test_name)) { passed++; } else {
 		failed_tests += test_name + "\n";
 	}
@@ -1210,6 +1210,306 @@ int main() {
 	test_name = "black bishop g5, friendly on h6/h4, enemies on e7/e3";
 	correct_board = 0x0008040005080000ULL;
 	if (test_valid_moves(game.get_valid_moves(33), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 1. white king e4, enemy rook e1, e-file x-ray
+	// valid squares: ['d3', 'd4', 'd5', 'f3', 'f4', 'f5']
+	game.set_board("8/8/8/8/4K3/8/8/4r3");
+	test_name = "white king e4, enemy rook e1, e-file x-ray";
+	correct_board = 0x0000001414140000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 2. white king e4, enemy rook a4, rank x-ray
+	// valid squares: ['d3', 'd5', 'e3', 'e5', 'f3', 'f5']
+	game.set_board("8/8/8/8/r3K3/8/8/8");
+	test_name = "white king e4, enemy rook a4, rank x-ray";
+	correct_board = 0x0000001C001C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 3. white king e4, enemy bishop b1, diagonal x-ray
+	// valid squares: ['d4', 'd5', 'e3', 'e5', 'f3', 'f4']
+	game.set_board("8/8/8/8/4K3/8/8/1b6");
+	test_name = "white king e4, enemy bishop b1, diagonal x-ray";
+	correct_board = 0x00000018140C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 4. white king e4, enemy bishop h7, anti-diagonal x-ray
+	// valid squares: ['d4', 'd5', 'e3', 'e5', 'f3', 'f4']
+	game.set_board("8/7b/8/8/4K3/8/8/8");
+	test_name = "white king e4, enemy bishop h7, anti-diagonal x-ray";
+	correct_board = 0x00000018140C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 5. white king e4, enemy queen d1, diagonal+file x-ray
+	// valid squares: ['e3', 'e5', 'f4', 'f5']
+	game.set_board("8/8/8/8/4K3/8/8/3q4");
+	test_name = "white king e4, enemy queen d1, diagonal+file x-ray";
+	correct_board = 0x0000000C04080000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 6. white king e4, enemy queen h1, diagonal x-ray
+	// valid squares: ['d3', 'd4', 'e3', 'e5', 'f4', 'f5']
+	game.set_board("8/8/8/8/4K3/8/8/7q");
+	test_name = "white king e4, enemy queen h1, diagonal x-ray";
+	correct_board = 0x0000000C14180000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 7. white king e4, undefended enemy rook f3
+	// valid squares: ['d4', 'd5', 'e5', 'f3']
+	game.set_board("8/8/8/8/4K3/5r2/8/8");
+	test_name = "white king e4, undefended enemy rook f3";
+	correct_board = 0x0000001810040000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 8. white king e4, enemy rook f3 defended by f2 rook
+	// valid squares: ['d4', 'd5', 'e5']
+	game.set_board("8/8/8/8/4K3/5r2/5r2/8");
+	test_name = "white king e4, enemy rook f3 defended by f2 rook";
+	correct_board = 0x0000001810000000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 9. white king e4 in check from rook e2
+	// valid squares: ['d3', 'd4', 'd5', 'f3', 'f4', 'f5']
+	game.set_board("8/8/8/8/4K3/8/4r3/8");
+	test_name = "white king e4 in check from rook e2";
+	correct_board = 0x0000001414140000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 10. white king e4, adjacent enemy queen e5
+	// valid squares: ['d3', 'e5', 'f3']
+	game.set_board("8/8/8/4q3/4K3/8/8/8");
+	test_name = "white king e4, adjacent enemy queen e5";
+	correct_board = 0x0000000800140000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 11. white king e4, enemy pawns d3 and f3
+	// valid squares: ['d3', 'd4', 'd5', 'e3', 'e5', 'f3', 'f4', 'f5']
+	game.set_board("8/8/8/8/4K3/3p1p2/8/8");
+	test_name = "white king e4, enemy pawns d3 and f3";
+	correct_board = 0x0000001C141C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 12. white king e4, enemy pawns c5/e5/c3/e3
+	// valid squares: ['d3', 'd5', 'e3', 'e5', 'f3', 'f5']
+	game.set_board("8/8/8/2p1p3/4K3/2p1p3/8/8");
+	test_name = "white king e4, enemy pawns c5/e5/c3/e3";
+	correct_board = 0x0000001C001C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 13. white king e4, enemy knight f2
+	// valid squares: ['d4', 'd5', 'e3', 'e5', 'f3', 'f4', 'f5']
+	game.set_board("8/8/8/8/4K3/8/5n2/8");
+	test_name = "white king e4, enemy knight f2";
+	correct_board = 0x0000001C140C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 14. white king e4, enemy knights d6/f6/d2/f2
+	// valid squares: ['d4', 'e3', 'e5', 'f4']
+	game.set_board("8/8/3n1n2/8/4K3/8/3n1n2/8");
+	test_name = "white king e4, enemy knights d6/f6/d2/f2";
+	correct_board = 0x0000000814080000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 15. white king e4, all 8 neighbors friendly pawns
+	// valid squares: []
+	game.set_board("8/8/8/3PPP2/3PKP2/3PPP2/8/8");
+	test_name = "white king e4, all 8 neighbors friendly pawns";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 16. white king e4, enemy rook a4 and bishop h4
+	// valid squares: ['d3', 'd5', 'e3', 'e5', 'f3', 'f5']
+	game.set_board("8/8/8/8/r3K2b/8/8/8");
+	test_name = "white king e4, enemy rook a4 and bishop h4";
+	correct_board = 0x0000001C001C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 17. white king e4, enemy rooks d6 and d2, d-file attacked
+	// valid squares: ['e3', 'e5', 'f3', 'f4', 'f5']
+	game.set_board("8/8/3r4/8/4K3/8/3r4/8");
+	test_name = "white king e4, enemy rooks d6 and d2, d-file attacked";
+	correct_board = 0x0000000C040C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 18. white king a1, enemy rooks b2 and c1
+	// valid squares: ['b2']
+	game.set_board("8/8/8/8/8/8/1r6/K1r5");
+	test_name = "white king a1, enemy rooks b2 and c1";
+	correct_board = 0x0000000000004000ULL;
+	if (test_valid_moves(game.get_valid_moves(7), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 19. white king h8, enemy rook g8
+	// valid squares: ['g7', 'g8', 'h7']
+	game.set_board("6rK/8/8/8/8/8/8/8");
+	test_name = "white king h8, enemy rook g8";
+	correct_board = 0x0201000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(56), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 20. white king h8, enemy rooks g2 and h2
+	// valid squares: []
+	game.set_board("7K/8/8/8/8/8/6rr/8");
+	test_name = "white king h8, enemy rooks g2 and h2";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(56), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 21. black king a8, open corner
+	// valid squares: ['a7', 'b7', 'b8']
+	game.set_board("k7/8/8/8/8/8/8/8");
+	test_name = "black king a8, open corner";
+	correct_board = 0x40C0000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(63), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 22. black king h8, open corner
+	// valid squares: ['g7', 'g8', 'h7']
+	game.set_board("7k/8/8/8/8/8/8/8");
+	test_name = "black king h8, open corner";
+	correct_board = 0x0203000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(56), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 23. black king a4, open edge
+	// valid squares: ['a3', 'a5', 'b3', 'b4', 'b5']
+	game.set_board("8/8/8/8/k7/8/8/8");
+	test_name = "black king a4, open edge";
+	correct_board = 0x000000C040C00000ULL;
+	if (test_valid_moves(game.get_valid_moves(31), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 24. black king h4, open edge
+	// valid squares: ['g3', 'g4', 'g5', 'h3', 'h5']
+	game.set_board("8/8/8/8/7k/8/8/8");
+	test_name = "black king h4, open edge";
+	correct_board = 0x0000000302030000ULL;
+	if (test_valid_moves(game.get_valid_moves(24), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 25. black king a1, open corner
+	// valid squares: ['a2', 'b1', 'b2']
+	game.set_board("8/8/8/8/8/8/8/k7");
+	test_name = "black king a1, open corner";
+	correct_board = 0x000000000000C040ULL;
+	if (test_valid_moves(game.get_valid_moves(7), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 26. black king h1, open corner
+	// valid squares: ['g1', 'g2', 'h2']
+	game.set_board("8/8/8/8/8/8/8/7k");
+	test_name = "black king h1, open corner";
+	correct_board = 0x0000000000000302ULL;
+	if (test_valid_moves(game.get_valid_moves(0), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 27. black king d6, enemy white queen d1, file x-ray
+	// valid squares: ['c5', 'c6', 'c7', 'e5', 'e6', 'e7']
+	game.set_board("8/8/3k4/8/8/8/8/3Q4");
+	test_name = "black king d6, enemy white queen d1, file x-ray";
+	correct_board = 0x0028282800000000ULL;
+	if (test_valid_moves(game.get_valid_moves(44), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 28. white king d4, enemy rook d1, d-file x-ray
+	// valid squares: ['c3', 'c4', 'c5', 'e3', 'e4', 'e5']  (wait, e4 should be... no, king IS on d4)
+	game.set_board("8/8/8/8/3K4/8/8/3r4");
+	test_name = "white king d4, enemy rook d1, d-file x-ray";
+	correct_board = 0x0000002828280000ULL;
+	if (test_valid_moves(game.get_valid_moves(28), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 29. white king d4, enemy rook h1, no x-ray on d-file
+	// valid squares: ['c3', 'c4', 'c5', 'd3', 'd5', 'e3', 'e4', 'e5']
+	game.set_board("8/8/8/8/3K4/8/8/7r");
+	test_name = "white king d4, enemy rook h1, no x-ray";
+	correct_board = 0x0000003828380000ULL;
+	if (test_valid_moves(game.get_valid_moves(28), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 30. white king d4, enemy rooks c6 and c3, c-file attacked
+	// valid squares: ['d3', 'd5', 'e3', 'e4', 'e5']
+	game.set_board("8/8/2r5/8/3K4/8/2r5/8");
+	test_name = "white king d4, enemy rooks c6 and c3, c-file attacked";
+	correct_board = 0x0000001808180000ULL;
+	if (test_valid_moves(game.get_valid_moves(28), correct_board, test_name)) { passed++; } else {
 		failed_tests += test_name + "\n";
 	}
 	total++;
