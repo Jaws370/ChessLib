@@ -1514,6 +1514,506 @@ int main() {
 	}
 	total++;
 
+	// --- PIN TESTS ---
+
+	// FILE PINS
+	// white bishop e4 pinned on e-file by rook e7 [PINNED]
+	// valid squares: []
+	game.set_board("4k3/4r3/8/8/4B3/8/8/4K3");
+	test_name = "white bishop e4 pinned on e-file by rook e7";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white knight e4 pinned on e-file, no valid moves [PINNED]
+	// valid squares: []
+	game.set_board("4k3/4r3/8/8/4N3/8/8/4K3");
+	test_name = "white knight e4 pinned on e-file, no valid moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white rook e4 pinned on e-file, can only move along e-file [PINNED]
+	// valid squares: ['e2', 'e3', 'e5', 'e6', 'e7']
+	game.set_board("4k3/4r3/8/8/4R3/8/8/4K3");
+	test_name = "white rook e4 pinned on e-file, can only move along e-file";
+	correct_board = 0x0008080800080800ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white queen e4 pinned on e-file by rook, moves along file only [PINNED]
+	// valid squares: ['e2', 'e3', 'e5', 'e6', 'e7']
+	game.set_board("4k3/4r3/8/8/4Q3/8/8/4K3");
+	test_name = "white queen e4 pinned on e-file by rook, moves along file only";
+	correct_board = 0x0008080800080800ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white pawn e3 pinned on e-file, can push forward [PINNED]
+	// valid squares: ['e4']
+	game.set_board("4k3/4r3/8/8/8/4P3/8/4K3");
+	test_name = "white pawn e3 pinned on e-file, can push forward";
+	correct_board = 0x0000000008000000ULL;
+	if (test_valid_moves(game.get_valid_moves(19), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white pawn e2 pinned on e-file, can single and double push [PINNED]
+	// valid squares: ['e3', 'e4']
+	game.set_board("4k3/4r3/8/8/8/8/4P3/4K3");
+	test_name = "white pawn e2 pinned on e-file, can single and double push";
+	correct_board = 0x0000000008080000ULL;
+	if (test_valid_moves(game.get_valid_moves(11), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white pawn e7 pinned facing pinner direction, no moves [PINNED]
+	// valid squares: []
+	game.set_board("4K3/4P3/8/8/8/4r3/8/4k3");
+	test_name = "white pawn e7 pinned facing pinner direction, no moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(51), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white rook e4 pinned on e-file by rook e6, can move between or capture [PINNED]
+	// valid squares: ['e2', 'e3', 'e5', 'e6']
+	game.set_board("4k3/8/4r3/8/4R3/8/8/4K3");
+	test_name = "white rook e4 pinned on e-file by rook e6, can move between or capture";
+	correct_board = 0x0000080800080800ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white bishop e4 pinned on e-file by queen e7 [PINNED]
+	// valid squares: []
+	game.set_board("4k3/4q3/8/8/4B3/8/8/4K3");
+	test_name = "white bishop e4 pinned on e-file by queen e7";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white queen e4 pinned on e-file by black queen e7 [PINNED]
+	// valid squares: ['e2', 'e3', 'e5', 'e6', 'e7']
+	game.set_board("4k3/4q3/8/8/4Q3/8/8/4K3");
+	test_name = "white queen e4 pinned on e-file by black queen e7";
+	correct_board = 0x0008080800080800ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// RANK PINS
+	// white knight d5 pinned on rank 5 by black rook e5 [PINNED]
+	// valid squares: []
+	game.set_board("8/8/8/K2Nr3/8/8/8/4k3");
+	test_name = "white knight d5 pinned on rank 5 by black rook e5";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(36), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white rook d5 pinned on rank 5 by black rook e5, can move along rank [PINNED]
+	// valid squares: ['b5', 'c5', 'e5']
+	game.set_board("8/8/8/K2Rr3/8/8/8/4k3");
+	test_name = "white rook d5 pinned on rank 5 by black rook e5, can move along rank";
+	correct_board = 0x0000006800000000ULL;
+	if (test_valid_moves(game.get_valid_moves(36), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white bishop d5 pinned on rank 5 by black rook e5, no valid moves [PINNED]
+	// valid squares: []
+	game.set_board("8/8/8/K2Br3/8/8/8/4k3");
+	test_name = "white bishop d5 pinned on rank 5 by black rook e5, no valid moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(36), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white queen d5 pinned on rank 5 by black rook e5, can move along rank [PINNED]
+	// valid squares: ['b5', 'c5', 'e5']
+	game.set_board("8/8/8/K2Qr3/8/8/8/4k3");
+	test_name = "white queen d5 pinned on rank 5 by black rook e5, can move along rank";
+	correct_board = 0x0000006800000000ULL;
+	if (test_valid_moves(game.get_valid_moves(36), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// DIAGONAL PINS
+	// white rook b2 pinned diagonally by black bishop g7, no valid moves [PINNED]
+	// valid squares: []
+	game.set_board("8/6b1/8/8/8/8/1R6/K7");
+	test_name = "white rook b2 pinned diagonally by black bishop g7, no valid moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(14), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white queen b2 pinned diagonally by black bishop g7, can only move along diagonal [PINNED]
+	// valid squares: ['c3', 'd4', 'e5', 'f6', 'g7']
+	game.set_board("8/6b1/8/8/8/8/1Q6/K7");
+	test_name = "white queen b2 pinned diagonally by black bishop g7, can only move along diagonal";
+	correct_board = 0x0002040810200000ULL;
+	if (test_valid_moves(game.get_valid_moves(14), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white knight b2 pinned diagonally by black bishop g7, no valid moves [PINNED]
+	// valid squares: []
+	game.set_board("8/6b1/8/8/8/8/1N6/K7");
+	test_name = "white knight b2 pinned diagonally by black bishop g7, no valid moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(14), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white bishop b2 pinned on diagonal by black queen f6 [PINNED]
+	// valid squares: ['c3', 'd4', 'e5', 'f6']
+	game.set_board("8/8/5q2/8/8/8/1B6/K7");
+	test_name = "white bishop b2 pinned on diagonal by black queen f6";
+	correct_board = 0x0000040810200000ULL;
+	if (test_valid_moves(game.get_valid_moves(14), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white pawn c3 pinned diagonally by black bishop g7, cannot push or capture off diagonal [PINNED]
+	// valid squares: []
+	game.set_board("8/6b1/8/8/8/2P5/8/K7");
+	test_name = "white pawn c3 pinned diagonally by black bishop g7, cannot push or capture off diagonal";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(21), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white pawn d4 pinned diagonally by black bishop e5, CAN capture the pinning piece [PINNED]
+	// valid squares: ['e5']
+	game.set_board("8/8/8/4b3/3P4/8/8/K7");
+	test_name = "white pawn d4 pinned diagonally by black bishop e5, CAN capture the pinning piece";
+	correct_board = 0x0000000800000000ULL;
+	if (test_valid_moves(game.get_valid_moves(28), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// ANTI-DIAGONAL PINS
+	// white queen g2 pinned on anti-diagonal by black bishop c6 [PINNED]
+	// valid squares: ['f3', 'e4', 'd5', 'c6']
+	game.set_board("8/8/2b5/8/8/8/6Q1/7K");
+	test_name = "white queen g2 pinned on anti-diagonal by black bishop c6";
+	correct_board = 0x0000201008040000ULL;
+	if (test_valid_moves(game.get_valid_moves(9), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white rook g2 pinned on anti-diagonal by black bishop c6, no valid moves [PINNED]
+	// valid squares: []
+	game.set_board("8/8/2b5/8/8/8/6R1/7K");
+	test_name = "white rook g2 pinned on anti-diagonal by black bishop c6, no valid moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(9), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white knight g2 pinned on anti-diagonal by black bishop c6, no valid moves [PINNED]
+	// valid squares: []
+	game.set_board("8/8/2b5/8/8/8/6N1/7K");
+	test_name = "white knight g2 pinned on anti-diagonal by black bishop c6, no valid moves";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(9), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// BLACK PIECES PINNED
+	// black bishop e5 pinned on e-file by white rook e1 [PINNED]
+	// valid squares: []
+	game.set_board("4k3/8/8/4b3/8/8/8/4R3");
+	test_name = "black bishop e5 pinned on e-file by white rook e1";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(35), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black rook e5 pinned on e-file by white rook e1, can move along file [PINNED]
+	// valid squares: ['e1', 'e2', 'e3', 'e4', 'e6', 'e7']
+	game.set_board("4k3/8/8/4r3/8/8/8/4R3");
+	test_name = "black rook e5 pinned on e-file by white rook e1, can move along file";
+	correct_board = 0x0008080008080808ULL;
+	if (test_valid_moves(game.get_valid_moves(35), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black queen b7 pinned diagonally by white bishop g2 [PINNED]
+	// valid squares: ['c6', 'd5', 'e4', 'f3', 'g2']
+	game.set_board("k7/1q6/8/8/8/8/6B1/8");
+	test_name = "black queen b7 pinned diagonally by white bishop g2";
+	correct_board = 0x0000201008040200ULL;
+	if (test_valid_moves(game.get_valid_moves(54), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black knight g7 pinned on anti-diagonal by white queen b2 [PINNED]
+	// valid squares: []
+	game.set_board("7k/6n1/8/8/8/8/1Q6/8");
+	test_name = "black knight g7 pinned on anti-diagonal by white queen b2";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(49), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// SPECIAL PAWN PINS
+	// white pawn f2 pinned on f-file, can single and double push [PINNED]
+	// valid squares: ['f3', 'f4']
+	game.set_board("5k2/5r2/8/8/8/8/5P2/5K2");
+	test_name = "white pawn f2 pinned on f-file, can single and double push";
+	correct_board = 0x0000000004040000ULL;
+	if (test_valid_moves(game.get_valid_moves(10), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// white pawn d5 pinned horizontally by black queen e5 [PINNED]
+	// valid squares: []
+	game.set_board("8/8/8/K2Pq3/8/8/8/8");
+	test_name = "white pawn d5 pinned horizontally by black queen e5";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(36), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 1. King x-ray back check evasion (Rook check)
+	// Valid squares: d5, f5, d4, f4, d3, f3
+	game.set_board("8/8/8/8/4k3/8/8/4R3");
+	test_name = "1. King x-ray back check evasion (Rook check)";
+	correct_board = 0x0000001414140000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 2. King x-ray back check evasion (Bishop check)
+	// Valid squares: d5, e5, d4, f4, e3, f3
+	game.set_board("8/8/8/8/4k3/8/8/1B6");
+	test_name = "2. King x-ray back check evasion (Bishop check)";
+	correct_board = 0x00000018140C0000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+	// 3. Pinned pawn cannot block a check (Fixed FEN)
+	// Setup: Black King h7, Black pawn g7 pinned by White Rook a7. White Q c2 checks h7.
+	// Valid squares: [] (g7 wants to go to g6 to block, but is pinned horizontally)
+	game.set_board("8/R5pk/8/8/8/8/2Q5/8 b - - 0 1");
+	test_name = "3. Pinned pawn cannot block a check";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(49), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 4. Double check - Queen cannot block or capture (Correct as originally written)
+	// Valid squares: []
+	game.set_board("4k3/3q4/4QN2/8/8/8/8/7K b - - 0 1");
+	test_name = "4. Double check - Queen cannot block or capture";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(52), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 5. Pinned piece cannot capture pinner to resolve check (Fixed FEN)
+	// Setup: Black King e8, Black Knight e5 pinned by White Rook e1. White Q d7 checks e8.
+	// Valid squares: [] (Knight cannot capture Q on d7 because it breaks the e-file pin)
+	game.set_board("4k3/3Q4/8/4n3/8/8/8/4R2K b - - 0 1");
+	test_name = "5. Pinned piece cannot capture pinner to resolve check";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(35), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 6. Pawn double push blocked by intermediate enemy piece
+	// Valid squares: []
+	game.set_board("8/8/8/8/8/p7/P7/8");
+	test_name = "6. Pawn double push blocked by intermediate enemy piece";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(15), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 7. Knight edge wrap (A-file isolation)
+	// Valid squares: b6, c5, c3, b2
+	game.set_board("8/8/8/8/N7/8/8/8");
+	test_name = "7. Knight edge wrap (A-file isolation)";
+	correct_board = 0x0000402000204000ULL;
+	if (test_valid_moves(game.get_valid_moves(31), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 8. Knight edge wrap (H-file isolation)
+	// Valid squares: g6, f5, f3, g2
+	game.set_board("8/8/8/8/7N/8/8/8");
+	test_name = "8. Knight edge wrap (H-file isolation)";
+	correct_board = 0x0000020400040200ULL;
+	if (test_valid_moves(game.get_valid_moves(24), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 9. Pinned Rook CAN counter-attack its pinner
+	// Valid squares: e3, e1
+	game.set_board("8/8/8/8/4k3/8/4r3/4R3");
+	test_name = "9. Pinned Rook CAN counter-attack its pinner";
+	correct_board = 0x0000000000080008ULL;
+	if (test_valid_moves(game.get_valid_moves(11), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 10. Pinned Bishop CANNOT capture pinner on a straight file
+	// Valid squares: []
+	game.set_board("8/8/8/8/4k3/8/4b3/4R3");
+	test_name = "10. Pinned Bishop CANNOT capture pinner on a straight file";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(11), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 11. Pawn diagonal capture edge wrap (A-file prevents H capture)
+	// Valid squares: a3, a4
+	game.set_board("8/8/8/8/8/7p/P7/8");
+	test_name = "11. Pawn diagonal capture edge wrap (A-file prevents H capture)";
+	correct_board = 0x0000000080800000ULL;
+	if (test_valid_moves(game.get_valid_moves(15), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 12. Pawn diagonal capture edge wrap (H-file prevents A capture)
+	// Valid squares: h3, h4
+	game.set_board("8/8/8/8/8/p7/7P/8");
+	test_name = "12. Pawn diagonal capture edge wrap (H-file prevents A capture)";
+	correct_board = 0x0000000001010000ULL;
+	if (test_valid_moves(game.get_valid_moves(8), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 13. Pinned pawn capturing along its own pinning diagonal (Fixed FEN)
+	// Setup: White King e1, White Pawn d2, Black Bishop c3.
+	// Valid squares: c3 (White pawn captures the piece pinning it)
+	game.set_board("8/8/8/8/8/2b5/3P4/4K3 w - - 0 1");
+	test_name = "13. Pinned pawn capturing along its own pinning diagonal";
+	correct_board = 0x0000000000200000ULL; // c3
+	if (test_valid_moves(game.get_valid_moves(12), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 14. King capturing protected piece (overlap logic) (Fixed Expected Board)
+	// Valid squares: d5, e5, f5 (d4 and f4 are attacked by the White Pawn on e3!)
+	game.set_board("8/8/8/8/4k3/4P3/4K3/8 b - - 0 1");
+	test_name = "14. King capturing protected piece (overlap logic)";
+	correct_board = 0x0000001C00000000ULL; // Removed the incorrect '14' from rank 4
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 15. Rook edge wrap isolation
+	// Valid squares: a1..a8 except a4, plus b4..h4
+	game.set_board("8/8/8/8/R7/8/8/8");
+	test_name = "15. Rook edge wrap isolation";
+	correct_board = 0x808080807F808080ULL;
+	if (test_valid_moves(game.get_valid_moves(31), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 16. Bishop edge wrap isolation
+	// Valid squares: b5, c6, d7, e8, b3, c2, d1
+	game.set_board("8/8/8/8/B7/8/8/8");
+	test_name = "16. Bishop edge wrap isolation";
+	correct_board = 0x0810204000402010ULL;
+	if (test_valid_moves(game.get_valid_moves(31), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 17. Double check blocking attempt with Bishop
+	// Valid squares: []
+	game.set_board("4k3/8/8/4r3/8/3n4/4B3/4K3");
+	test_name = "17. Double check blocking attempt with Bishop";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(11), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 18. King moving into backward pawn attack zone
+	// Valid squares: d5, e5, f5, d4, f4, e3
+	game.set_board("8/8/8/8/4k3/8/4P3/8");
+	test_name = "18. King moving into backward pawn attack zone";
+	correct_board = 0x0000001C14080000ULL;
+	if (test_valid_moves(game.get_valid_moves(27), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 19. Pinned Queen moving AWAY from King on diagonal
+	// Valid squares: d3, b1 (capture)
+	game.set_board("8/8/8/8/4k3/8/2q5/1B6");
+	test_name = "19. Pinned Queen moving AWAY from King on diagonal";
+	correct_board = 0x0000000000100040ULL;
+	if (test_valid_moves(game.get_valid_moves(13), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// 20. Pawn double push blocked by FRIENDLY piece
+	// Valid squares: []
+	game.set_board("8/8/8/8/8/P7/P7/8");
+	test_name = "20. Pawn double push blocked by FRIENDLY piece";
+	correct_board = 0x0000000000000000ULL;
+	if (test_valid_moves(game.get_valid_moves(15), correct_board, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
 	std::cout << "Passed: " << passed << "/" << total << std::endl;
 	std::cout << std::endl;
 	std::cout << "Failed:\n" << failed_tests << std::endl;

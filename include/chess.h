@@ -28,14 +28,16 @@ public:
 
 	sb get_valid_moves(const int pos) { return gd.get_valid_moves(pos, tables.lookup_table, tables.between_table); }
 
-	sb get_table_lookup(const int pos) const {
+	[[nodiscard]] sb get_table_lookup(const int pos) const {
 		sb result = 0;
 		for (int i = 0; i < 8; i++) result |= tables.lookup_table.queen_table[pos][i];
 		return result;
 	}
 
-	sb get_between_table(const int pos1, const int pos2) const { return tables.between_table[pos1][pos2]; }
+	[[nodiscard]] sb get_between_table(const int pos1, const int pos2) const {
+		return tables.between_table[pos1][pos2];
+	}
 
 	void set_board(const std::string &fen) { gd.set(fen, tables.lookup_table, tables.between_table); };
-	std::string get_board() const { return gd.get(); };
+	[[nodiscard]] std::string get_board() const { return gd.get(); };
 };

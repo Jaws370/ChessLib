@@ -283,8 +283,10 @@ void game_data::update_attack_boards(const lookup_tables &lookup_table, const be
 sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, const between_tables &between_table) {
 	sb output{0};
 
+	// TODO need to check for checks and make sure that this move relieves the check
+
 	// get the piece
-	piece_color piece_color{get_color(sb{1} << pos)};
+	const piece_color piece_color{get_color(sb{1} << pos)};
 	const piece_data piece{
 		piece_color == piece_color::WHITE ? white_pieces[piece_lookup[pos]] : black_pieces[piece_lookup[pos]]
 	};
@@ -317,7 +319,7 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 	if (piece.pinner_id != 255) {
 		auto [friendly_pieces, enemy_pieces]{get_pieces(piece.color)};
 		// get the pinner
-		const piece_data &pinner{(*friendly_pieces)[piece.pinner_id]};
+		const piece_data &pinner{(*enemy_pieces)[piece.pinner_id]};
 
 		// because we can guarantee being pinned, valid moves must only be on the line between pinner and king
 		if ((*friendly_pieces)[15].position != 0) {
@@ -331,7 +333,7 @@ sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, 
 void game_data::move(const int old_pos, const int new_pos, const lookup_tables &lookup_table,
                      const between_tables &between_table) {
 	// get the piece
-	piece_color piece_color{get_color(sb{1} << old_pos)};
+	const piece_color piece_color{get_color(sb{1} << old_pos)};
 	piece_data *piece{
 		piece_color == piece_color::WHITE ? &white_pieces[piece_lookup[old_pos]] : &black_pieces[piece_lookup[old_pos]]
 	};
@@ -416,7 +418,7 @@ std::string game_data::get() const {
 			}
 
 			// get the piece
-			piece_color piece_color{get_color(temp_pos)};
+			const piece_color piece_color{get_color(temp_pos)};
 			const piece_data piece{
 				piece_color == piece_color::WHITE ? white_pieces[piece_lookup[i]] : black_pieces[piece_lookup[i]]
 			};
@@ -427,7 +429,7 @@ std::string game_data::get() const {
 			char c{piece_chars[static_cast<int>(piece.type)]};
 
 			// if the piece is black, set to lower case
-			if (piece_color == piece_color::BLACK) { c = std::tolower(c); }
+			if (piece_color == piece_color::BLACK) { c = static_cast<char>(std::tolower(c)); }
 
 			output += c;
 		} else { counter++; }
@@ -473,7 +475,7 @@ void game_data::set(const std::string &fen, const lookup_tables &lookup_table, c
 		// get the correct board index
 		int board{0};
 		if (std::isupper(c)) { board = 6; }
-		board += char_lookup[std::toupper(c)];
+		board += char_lookup[static_cast<char>(std::toupper(c))];
 
 		// adds the piece to bit board
 		b_boards[board] |= sb{1} << pos;
@@ -546,7 +548,7 @@ void game_data::update_pins(auto &piece_set, const auto &table) {
 			// continue of not enough pieces on the arm
 			if (!snd || !fst) { continue; }
 			// check if the piece could be a pinner
-			if (!snd->is_slider || snd->color == piece_color::BLACK) { continue; }
+			if (!snd->is_slider || snd->color == piece_set[15].color) { continue; }
 			// if the second rayed piece has attacks along arm towards king
 			if (snd->attacks & arm) {
 				// the first rayed piece is pinned

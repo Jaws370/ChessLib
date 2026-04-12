@@ -16,7 +16,7 @@ class game_data {
 
 	static int sb_to_int(const sb board) { return __builtin_ctzll(board); }
 
-	piece_color get_color(sb pos) const;
+	[[nodiscard]] piece_color get_color(sb pos) const;
 	std::pair<sb *, sb *> get_boards(piece_color color);
 	std::pair<std::array<piece_data, 16> *, std::array<piece_data, 16> *> get_pieces(piece_color color);
 
@@ -35,10 +35,10 @@ public:
 		set(fen, lookup_table, between_table);
 	}
 
-	std::string get() const;
+	[[nodiscard]] std::string get() const;
 	void set(const std::string &fen, const lookup_tables &lookup_table, const between_tables &between_table);
 
-	int evaluate_position() const;
+	[[nodiscard]] int evaluate_position() const;
 
 	sb get_valid_moves(int pos, const lookup_tables &lookup_table, const between_tables &between_table);
 	void move(int old_pos, int new_pos, const lookup_tables &lookup_table, const between_tables &between_table);
