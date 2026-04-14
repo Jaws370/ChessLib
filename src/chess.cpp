@@ -82,7 +82,6 @@ bool chess::check_move(const int old_idx, const int new_idx) {
 
 	// get valid moves and check them against the new position
 	const sb valid_moves = gd.get_valid_moves(old_idx, tables.lookup_table, tables.between_table);
-	std::cout << std::endl << "valid moves: " << std::bitset<64>(valid_moves) << std::endl;
 	const bool is_move_valid = valid_moves & (sb{1} << new_idx);
 
 	// is the move is not valid, then can never be true
@@ -92,7 +91,7 @@ bool chess::check_move(const int old_idx, const int new_idx) {
 	if (piece.type == piece_type::KING) { return true; }
 
 	// check if the king is under attack
-	if (gd.side_attacks[static_cast<int>(piece_color)] & (*friendly_pieces)[15].position) {
+	if (gd.side_attacks[1 - static_cast<int>(piece_color)] & (*friendly_pieces)[15].position) {
 		// check if the king is in double check
 		int check_count{0};
 		const piece_data *attacker = nullptr;

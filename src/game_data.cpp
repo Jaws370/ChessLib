@@ -308,8 +308,6 @@ sb game_data::king_logic(const piece_data &piece, const int pos, const lookup_ta
 	// remove own pieces
 	output &= ~*friendly_board;
 
-	std::cout << "friendly board: " << std::bitset<64>(*friendly_board) << std::endl;
-
 	// reminder! pinned pieces are included in attacked pieces, so no need to recheck for them
 
 	return output;
