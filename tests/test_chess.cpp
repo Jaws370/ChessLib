@@ -2521,6 +2521,586 @@ int main() {
 	}
 	total++;
 
+	// ================================================================
+	// GROUP 1: Absolute pins
+	// ================================================================
+
+	// rook d3 pinned diagonally by bishop b5, cannot move to d6 [PINNED]
+	// d3(20) -> d6(44) = false
+	game.set_board("4k3/8/8/1b6/8/3R4/8/5K2 w - - 0 1");
+	test_name = "rook d3 pinned diagonally by bishop b5, cannot move to d6";
+	correct_result = false;
+	if (test_check_moves(game.check_move(20, 44), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// rook d3 pinned diagonally by bishop b5, cannot move to a3 [PINNED]
+	// d3(20) -> a3(23) = false
+	game.set_board("4k3/8/8/1b6/8/3R4/8/5K2 w - - 0 1");
+	test_name = "rook d3 pinned diagonally by bishop b5, cannot move to a3";
+	correct_result = false;
+	if (test_check_moves(game.check_move(20, 23), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// rook d3 pinned diagonally by bishop b5, cannot capture pinner (off rank) [PINNED]
+	// d3(20) -> b5(38) = false
+	game.set_board("4k3/8/8/1b6/8/3R4/8/5K2 w - - 0 1");
+	test_name = "rook d3 pinned diagonally by bishop b5, cannot capture pinner (off rank)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(20, 38), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// knight e4 pinned on e-file by rook e7, cannot move to f6 [PINNED]
+	// e4(27) -> f6(42) = false
+	game.set_board("4k3/4r3/8/8/4N3/8/8/4K3 w - - 0 1");
+	test_name = "knight e4 pinned on e-file by rook e7, cannot move to f6";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 42), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// knight e4 pinned on e-file by rook e7, cannot move to d2 [PINNED]
+	// e4(27) -> d2(12) = false
+	game.set_board("4k3/4r3/8/8/4N3/8/8/4K3 w - - 0 1");
+	test_name = "knight e4 pinned on e-file by rook e7, cannot move to d2";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 12), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// knight e4 pinned on e-file by rook e7, cannot move to c3 [PINNED]
+	// e4(27) -> c3(21) = false
+	game.set_board("4k3/4r3/8/8/4N3/8/8/4K3 w - - 0 1");
+	test_name = "knight e4 pinned on e-file by rook e7, cannot move to c3";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 21), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// bishop c5 pinned on rank 5 by rook e5, cannot move to b4 [PINNED]
+	// c5(37) -> b4(30) = false
+	game.set_board("8/8/8/K1B1r3/8/8/8/4k3 w - - 0 1");
+	test_name = "bishop c5 pinned on rank 5 by rook e5, cannot move to b4";
+	correct_result = false;
+	if (test_check_moves(game.check_move(37, 30), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// bishop c5 pinned on rank 5 by rook e5, cannot move to d4 [PINNED]
+	// c5(37) -> d4(28) = false
+	game.set_board("8/8/8/K1B1r3/8/8/8/4k3 w - - 0 1");
+	test_name = "bishop c5 pinned on rank 5 by rook e5, cannot move to d4";
+	correct_result = false;
+	if (test_check_moves(game.check_move(37, 28), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// bishop c5 pinned on rank 5, can capture rook e5 (along pin) [PINNED]
+	// c5(37) -> e5(35) = false
+	game.set_board("8/8/8/K1B1r3/8/8/8/4k3 w - - 0 1");
+	test_name = "bishop c5 pinned on rank 5, can capture rook e5 (along pin)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(37, 35), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// queen b2 pinned by bishop f6, can move to c3 (along diagonal)
+	// b2(14) -> c3(21) = true
+	game.set_board("6k1/8/5b2/8/8/8/1Q6/2K5 w - - 0 1");
+	test_name = "queen b2 pinned by bishop f6, can move to c3 (along diagonal)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(14, 21), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// queen b2 pinned by bishop f6, can capture pinner on f6
+	// b2(14) -> f6(42) = true
+	game.set_board("6k1/8/5b2/8/8/8/1Q6/2K5 w - - 0 1");
+	test_name = "queen b2 pinned by bishop f6, can capture pinner on f6";
+	correct_result = true;
+	if (test_check_moves(game.check_move(14, 42), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// queen b2 pinned by bishop f6, cannot move to b5 (off pin line)
+	// b2(14) -> b5(38) = true
+	game.set_board("6k1/8/5b2/8/8/8/1Q6/2K5 w - - 0 1");
+	test_name = "queen b2 pinned by bishop f6, cannot move to b5 (off pin line)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(14, 38), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// queen b2 pinned by bishop f6, cannot move to a2 (off pin line)
+	// b2(14) -> a2(15) = true
+	game.set_board("6k1/8/5b2/8/8/8/1Q6/2K5 w - - 0 1");
+	test_name = "queen b2 pinned by bishop f6, cannot move to a2 (off pin line)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(14, 15), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// queen b2 pinned by bishop f6, cannot move to a1 (off pin line)
+	// b2(14) -> a1(7) = true
+	game.set_board("6k1/8/5b2/8/8/8/1Q6/2K5 w - - 0 1");
+	test_name = "queen b2 pinned by bishop f6, cannot move to a1 (off pin line)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(14, 7), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// ================================================================
+	// GROUP 2: Single check — blocker moves
+	// ================================================================
+
+	// check from rook e7: rook e3 blocks at e5 (pinned but along pin) [PINNED]
+	// e3(19) -> e5(35) = true
+	game.set_board("4k3/4r3/8/8/8/4R3/8/4K3 w - - 0 1");
+	test_name = "check from rook e7: rook e3 blocks at e5 (pinned but along pin)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(19, 35), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from rook e7: rook e3 captures checker on e7 [PINNED]
+	// e3(19) -> e7(51) = true
+	game.set_board("4k3/4r3/8/8/8/4R3/8/4K3 w - - 0 1");
+	test_name = "check from rook e7: rook e3 captures checker on e7";
+	correct_result = true;
+	if (test_check_moves(game.check_move(19, 51), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from rook e7: rook e3 cannot move to a3 (doesnt resolve) [PINNED]
+	// e3(19) -> a3(23) = false
+	game.set_board("4k3/4r3/8/8/8/4R3/8/4K3 w - - 0 1");
+	test_name = "check from rook e7: rook e3 cannot move to a3 (doesnt resolve)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(19, 23), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from rook e7: rook e3 cannot move to d3 (doesnt resolve) [PINNED]
+	// e3(19) -> d3(20) = false
+	game.set_board("4k3/4r3/8/8/8/4R3/8/4K3 w - - 0 1");
+	test_name = "check from rook e7: rook e3 cannot move to d3 (doesnt resolve)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(19, 20), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from bishop c4: bishop e2 blocks at d3
+	// e2(11) -> d3(20) = true
+	game.set_board("4k3/8/8/8/2b5/8/4B3/4K3 w - - 0 1");
+	test_name = "check from bishop c4: bishop e2 blocks at d3";
+	correct_result = true;
+	if (test_check_moves(game.check_move(11, 20), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from bishop c4: bishop e2 captures bishop c4
+	// e2(11) -> c4(29) = true
+	game.set_board("4k3/8/8/8/2b5/8/4B3/4K3 w - - 0 1");
+	test_name = "check from bishop c4: bishop e2 captures bishop c4";
+	correct_result = true;
+	if (test_check_moves(game.check_move(11, 29), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from bishop c4: bishop e2 to f3 does not resolve check
+	// e2(11) -> f3(18) = true
+	game.set_board("4k3/8/8/8/2b5/8/4B3/4K3 w - - 0 1");
+	test_name = "check from bishop c4: bishop e2 to f3 does not resolve check";
+	correct_result = true;
+	if (test_check_moves(game.check_move(11, 18), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from bishop c4: bishop e2 to g4 does not resolve check
+	// e2(11) -> g4(25) = true
+	game.set_board("4k3/8/8/8/2b5/8/4B3/4K3 w - - 0 1");
+	test_name = "check from bishop c4: bishop e2 to g4 does not resolve check";
+	correct_result = true;
+	if (test_check_moves(game.check_move(11, 25), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from knight d3: king moves to d1 (safe) [CHECK]
+	// e1(3) -> d1(4) = true
+	game.set_board("4k3/8/8/8/8/3n4/8/4K3 w - - 0 1");
+	test_name = "check from knight d3: king moves to d1 (safe)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from knight d3: king cannot move to f2 (knight attacks) [CHECK]
+	// e1(3) -> f2(10) = false
+	game.set_board("4k3/8/8/8/8/3n4/8/4K3 w - - 0 1");
+	test_name = "check from knight d3: king cannot move to f2 (knight attacks)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(3, 10), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from knight d3: bishop e2 captures knight (resolves) [CHECK]
+	// e2(11) -> d3(20) = true
+	game.set_board("4k3/8/8/8/8/3n4/4B3/4K3 w - - 0 1");
+	test_name = "check from knight d3: bishop e2 captures knight (resolves)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(11, 20), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from knight d3: bishop e2 to f3 cannot block knight [CHECK]
+	// e2(11) -> f3(18) = false
+	game.set_board("4k3/8/8/8/8/3n4/4B3/4K3 w - - 0 1");
+	test_name = "check from knight d3: bishop e2 to f3 cannot block knight";
+	correct_result = false;
+	if (test_check_moves(game.check_move(11, 18), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// check from knight d3: bishop e2 to c4 cannot block knight [CHECK]
+	// e2(11) -> c4(29) = false
+	game.set_board("4k3/8/8/8/8/3n4/4B3/4K3 w - - 0 1");
+	test_name = "check from knight d3: bishop e2 to c4 cannot block knight";
+	correct_result = false;
+	if (test_check_moves(game.check_move(11, 29), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// ================================================================
+	// GROUP 3: Double check — only king can move
+	// ================================================================
+
+	// double check rook e7 + knight f6: king moves to d1 [CHECK]
+	// e1(3) -> d1(4) = true
+	game.set_board("4k3/4r3/5n2/8/8/8/8/4K3 w - - 0 1");
+	test_name = "double check rook e7 + knight f6: king moves to d1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check rook e7 + knight f6: king moves to f2 [CHECK]
+	// e1(3) -> f2(10) = true
+	game.set_board("4k3/4r3/5n2/8/8/8/8/4K3 w - - 0 1");
+	test_name = "double check rook e7 + knight f6: king moves to f2";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 10), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check rook e7 + knight f6: king moves to f1 [CHECK]
+	// e1(3) -> f1(2) = true
+	game.set_board("4k3/4r3/5n2/8/8/8/8/4K3 w - - 0 1");
+	test_name = "double check rook e7 + knight f6: king moves to f1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 2), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check rook+knight: friendly rook e4 cannot capture rook e7 [PINNED]
+	// e4(27) -> e7(51) = true
+	game.set_board("4k3/4r3/5n2/8/4R3/8/8/4K3 w - - 0 1");
+	test_name = "double check rook+knight: friendly rook e4 cannot capture rook e7";
+	correct_result = true;
+	if (test_check_moves(game.check_move(27, 51), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check rook+knight: friendly rook e4 cannot capture knight f6 [PINNED]
+	// e4(27) -> f6(42) = false
+	game.set_board("4k3/4r3/5n2/8/4R3/8/8/4K3 w - - 0 1");
+	test_name = "double check rook+knight: friendly rook e4 cannot capture knight f6";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 42), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check rook+knight: friendly rook e4 cannot interpose at e6 [PINNED]
+	// e4(27) -> e6(43) = true
+	game.set_board("4k3/4r3/5n2/8/4R3/8/8/4K3 w - - 0 1");
+	test_name = "double check rook+knight: friendly rook e4 cannot interpose at e6";
+	correct_result = true;
+	if (test_check_moves(game.check_move(27, 43), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check two rooks: king moves to f1 [CHECK]
+	// e1(3) -> f1(2) = true
+	game.set_board("4k3/4r3/8/8/8/8/3r4/4K3 w - - 0 1");
+	test_name = "double check two rooks: king moves to f1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 2), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check two rooks: king cannot go to d1 (covered by d2 rook) [CHECK]
+	// e1(3) -> d1(4) = false
+	game.set_board("4k3/4r3/8/8/8/8/3r4/4K3 w - - 0 1");
+	test_name = "double check two rooks: king cannot go to d1 (covered by d2 rook)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// double check two rooks: king cannot capture rook d2 (defended by e7 rook) [CHECK]
+	// e1(3) -> d2(12) = true
+	game.set_board("4k3/4r3/8/8/8/8/3r4/4K3 w - - 0 1");
+	test_name = "double check two rooks: king cannot capture rook d2 (defended by e7 rook)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 12), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// ================================================================
+	// GROUP 4: King captures and x-rays
+	// ================================================================
+
+	// king e1 captures undefended rook e3 (resolves check) [CHECK]
+	// e1(3) -> e3(19) = false
+	game.set_board("4k3/8/8/8/8/4r3/8/4K3 w - - 0 1");
+	test_name = "king e1 captures undefended rook e3 (resolves check)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(3, 19), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e3, can move to d1 [CHECK]
+	// e1(3) -> d1(4) = true
+	game.set_board("4k3/8/8/8/8/4r3/8/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e3, can move to d1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e3, can move to f1 [CHECK]
+	// e1(3) -> f1(2) = true
+	game.set_board("4k3/8/8/8/8/4r3/8/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e3, can move to f1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 2), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e3, cannot move to d2 (rook attacks rank 3? no) [CHECK]
+	// e1(3) -> d2(12) = true
+	game.set_board("4k3/8/8/8/8/4r3/8/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e3, cannot move to d2 (rook attacks rank 3? no)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 12), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e2, moves to d1 (safe) [CHECK]
+	// e1(3) -> d1(4) = true
+	game.set_board("4k3/8/8/8/8/8/4r3/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e2, moves to d1 (safe)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e2, moves to f1 (safe) [CHECK]
+	// e1(3) -> f1(2) = true
+	game.set_board("4k3/8/8/8/8/8/4r3/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e2, moves to f1 (safe)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 2), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e2, cannot move to d2 (rook covers rank 2) [CHECK]
+	// e1(3) -> d2(12) = false
+	game.set_board("4k3/8/8/8/8/8/4r3/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e2, cannot move to d2 (rook covers rank 2)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(3, 12), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// king e1 in check from rook e2, cannot move to f2 (rook covers rank 2) [CHECK]
+	// e1(3) -> f2(10) = false
+	game.set_board("4k3/8/8/8/8/8/4r3/4K3 w - - 0 1");
+	test_name = "king e1 in check from rook e2, cannot move to f2 (rook covers rank 2)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(3, 10), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// ================================================================
+	// GROUP 5: Black side
+	// ================================================================
+
+	// black knight e4 pinned on e-file by white rook e7, cannot move to d6 [PINNED]
+	// e4(27) -> d6(44) = false
+	game.set_board("4K3/4R3/8/8/4n3/8/8/4k3 b - - 0 1");
+	test_name = "black knight e4 pinned on e-file by white rook e7, cannot move to d6";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 44), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black knight e4 pinned on e-file by white rook e7, cannot move to f6 [PINNED]
+	// e4(27) -> f6(42) = false
+	game.set_board("4K3/4R3/8/8/4n3/8/8/4k3 b - - 0 1");
+	test_name = "black knight e4 pinned on e-file by white rook e7, cannot move to f6";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 42), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black knight e4 pinned on e-file by white rook e7, cannot move to c3 [PINNED]
+	// e4(27) -> c3(21) = false
+	game.set_board("4K3/4R3/8/8/4n3/8/8/4k3 b - - 0 1");
+	test_name = "black knight e4 pinned on e-file by white rook e7, cannot move to c3";
+	correct_result = false;
+	if (test_check_moves(game.check_move(27, 21), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black king in check from bishop c4, moves to d1
+	// e1(3) -> d1(4) = true
+	game.set_board("4K3/8/8/8/2B5/8/8/4k3 b - - 0 1");
+	test_name = "black king in check from bishop c4, moves to d1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black king in check from bishop c4, moves to f2
+	// e1(3) -> f2(10) = true
+	game.set_board("4K3/8/8/8/2B5/8/8/4k3 b - - 0 1");
+	test_name = "black king in check from bishop c4, moves to f2";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 10), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black king in check from bishop c4, cannot go to f1 (on diagonal)
+	// e1(3) -> f1(2) = false
+	game.set_board("4K3/8/8/8/2B5/8/8/4k3 b - - 0 1");
+	test_name = "black king in check from bishop c4, cannot go to f1 (on diagonal)";
+	correct_result = false;
+	if (test_check_moves(game.check_move(3, 2), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black rook d2 can block bishop check at c3
+	// d2(12) -> c3(21) = false
+	game.set_board("4K3/8/8/8/2B5/8/3r4/4k3 b - - 0 1");
+	test_name = "black rook d2 can block bishop check at c3";
+	correct_result = false;
+	if (test_check_moves(game.check_move(12, 21), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black rook d2 can capture bishop c4 to resolve check
+	// d2(12) -> c4(29) = false
+	game.set_board("4K3/8/8/8/2B5/8/3r4/4k3 b - - 0 1");
+	test_name = "black rook d2 can capture bishop c4 to resolve check";
+	correct_result = false;
+	if (test_check_moves(game.check_move(12, 29), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black rook d2 cannot move to d5 (doesnt resolve check)
+	// d2(12) -> d5(36) = true
+	game.set_board("4K3/8/8/8/2B5/8/3r4/4k3 b - - 0 1");
+	test_name = "black rook d2 cannot move to d5 (doesnt resolve check)";
+	correct_result = true;
+	if (test_check_moves(game.check_move(12, 36), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black king double check rook d7 + knight d6, moves to d1
+	// e1(3) -> d1(4) = true
+	game.set_board("4K3/3R4/3N4/8/8/8/8/4k3 b - - 0 1");
+	test_name = "black king double check rook d7 + knight d6, moves to d1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 4), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black king double check rook d7 + knight d6, moves to f1
+	// e1(3) -> f1(2) = true
+	game.set_board("4K3/3R4/3N4/8/8/8/8/4k3 b - - 0 1");
+	test_name = "black king double check rook d7 + knight d6, moves to f1";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 2), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
+	// black king double check rook d7 + knight d6, moves to f2
+	// e1(3) -> f2(10) = true
+	game.set_board("4K3/3R4/3N4/8/8/8/8/4k3 b - - 0 1");
+	test_name = "black king double check rook d7 + knight d6, moves to f2";
+	correct_result = true;
+	if (test_check_moves(game.check_move(3, 10), correct_result, test_name)) { passed++; } else {
+		failed_tests += test_name + "\n";
+	}
+	total++;
+
 	std::cout << "Passed: " << passed << "/" << total << std::endl;
 	std::cout << std::endl;
 	std::cout << "Failed:\n" << failed_tests << std::endl;
