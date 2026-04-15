@@ -14,7 +14,7 @@ chess::chess(const std::string &fen): gd(fen, tables.lookup_table, tables.betwee
 	p2_color = static_cast<piece_color>(1 - color);
 }
 
-int chess::minimax(game_data pseudo_gd, const int depth, const bool is_maximizing) {
+int chess::minimax(game_data pseudo_gd, const int depth, const bool is_maximizing, int alpha, int beta) {
 	if (depth == 0) {
 		// || is_check_mate(); )
 		return pseudo_gd.evaluate_position();
@@ -32,11 +32,17 @@ int chess::minimax(game_data pseudo_gd, const int depth, const bool is_maximizin
 				const int move_index = __builtin_ctzll(valid_moves);
 				game_data new_pseudo_gd = pseudo_gd;
 
-				new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
+				// make sure the move is valid
+				if (check_move(piece_index, move_index)) {
+					new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
 
-				// check if the new move is good
-				const int result = minimax(new_pseudo_gd, depth - 1, false);
-				best_score = std::max(best_score, result);
+					// check if the new move is good
+					const int result = minimax(new_pseudo_gd, depth - 1, false, alpha, beta);
+					best_score = std::max(best_score, result);
+					alpha = std::max(alpha, best_score);
+
+					if (alpha >= beta) { return best_score; }
+				}
 
 				valid_moves &= ~(sb{1} << move_index);
 			}
@@ -57,11 +63,17 @@ int chess::minimax(game_data pseudo_gd, const int depth, const bool is_maximizin
 				const int move_index = __builtin_ctzll(valid_moves);
 				game_data new_pseudo_gd = pseudo_gd;
 
-				new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
+				// make sure the move is valid
+				if (check_move(piece_index, move_index)) {
+					new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
 
-				// check if the new move is good
-				const int result = minimax(new_pseudo_gd, depth - 1, true);
-				best_score = std::min(best_score, result);
+					// check if the new move is good
+					const int result = minimax(new_pseudo_gd, depth - 1, true, alpha, beta);
+					best_score = std::min(best_score, result);
+					beta = std::min(beta, best_score);
+
+					if (alpha >= beta) { return best_score; }
+				}
 
 				valid_moves &= ~(sb{1} << move_index);
 			}
@@ -134,7 +146,7 @@ void chess::ai_move(const int depth) {
 	if (p2_color == piece_color::WHITE) { is_maximizing = true; }
 
 	game_data pseudo_gd = gd;
-	std::pair<int, int> best_move{-1, -1};
+	std::pair best_move{-1, -1};
 
 	if (is_maximizing) {
 		// get the best move
@@ -149,13 +161,16 @@ void chess::ai_move(const int depth) {
 				const int move_index = __builtin_ctzll(valid_moves);
 				game_data new_pseudo_gd = pseudo_gd;
 
-				new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
+				// make sure the move is valid
+				if (check_move(piece_index, move_index)) {
+					new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
 
-				// check if the new move is good
-				const int result = minimax(new_pseudo_gd, depth - 1, false);
-				if (result > best_score) {
-					best_move = std::make_pair(piece_index, move_index);
-					best_score = result;
+					// check if the new move is good
+					const int result = minimax(new_pseudo_gd, depth - 1, false, INT_MIN, INT_MAX);
+					if (result > best_score) {
+						best_move = std::make_pair(piece_index, move_index);
+						best_score = result;
+					}
 				}
 
 				valid_moves &= ~(sb{1} << move_index);
@@ -176,13 +191,16 @@ void chess::ai_move(const int depth) {
 				const int move_index = __builtin_ctzll(valid_moves);
 				game_data new_pseudo_gd = pseudo_gd;
 
-				new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
+				// make sure the move is valid
+				if (check_move(piece_index, move_index)) {
+					new_pseudo_gd.move(piece_index, move_index, tables.lookup_table, tables.between_table);
 
-				// check if the new move is good
-				const int result = minimax(new_pseudo_gd, depth - 1, true);
-				if (result < best_score) {
-					best_move = std::make_pair(piece_index, move_index);
-					best_score = result;
+					// check if the new move is good
+					const int result = minimax(new_pseudo_gd, depth - 1, true, INT_MIN, INT_MAX);
+					if (result < best_score) {
+						best_move = std::make_pair(piece_index, move_index);
+						best_score = result;
+					}
 				}
 
 				valid_moves &= ~(sb{1} << move_index);

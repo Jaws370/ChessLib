@@ -13,7 +13,7 @@ class chess {
 	piece_color p1_color;
 	piece_color p2_color;
 
-	int minimax(game_data pseudo_gd, int depth, bool is_maximizing);
+	int minimax(game_data pseudo_gd, int depth, bool is_maximizing, int alpha, int beta);
 
 public:
 	explicit chess(const std::string &fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");

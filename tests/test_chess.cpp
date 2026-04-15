@@ -1,5 +1,6 @@
 #include <bitset>
 #include <iostream>
+#include <chrono>
 #include "../include/chess.h"
 
 void print_bit_board(const sb board) {
@@ -3416,6 +3417,19 @@ int main() {
 		failed_tests += test_name + "\n";
 	}
 	total++;
+
+	std::cout << std::endl << "AI TESTING" << std::endl;
+
+	std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+	game.set_board("8/8/2b5/8/8/8/6Q1/7K");
+	std::cout << game.get_board() << std::endl << std::endl;
+	game.ai_move(6);
+	std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+
+	std::cout << "AI took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" <<
+			std::endl;
+
+	std::cout << game.get_board() << std::endl << std::endl;
 
 	std::cout << "Passed: " << passed << "/" << total << std::endl;
 	std::cout << std::endl;
