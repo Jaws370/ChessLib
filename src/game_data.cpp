@@ -487,14 +487,77 @@ void game_data::update_pins(auto &piece_set, const auto &table) {
 	}
 }
 
-int game_data::evaluate_position() const {
-	int eval = 0;
-	// count up material
-	for (const auto &piece: white_pieces) { eval += piece.value; }
+float game_data::evaluate_position(const lookup_tables &lookup_table, const between_tables &between_table) {
+	// calculate material diff
+	int material_diff = 0;
+	for (const auto &piece: white_pieces) { material_diff += piece.value; }
+	for (const auto &piece: black_pieces) { material_diff -= piece.value; }
 
-	for (const auto &piece: black_pieces) { eval -= piece.value; }
+	// calculate king safety
+	int king_weakness = 0;
+	int king_openness = 0;
+	sb king_controlled = lookup_table.king_table[sb_to_int(white_pieces[15].position)][0];
+	// 1. count the value of pieces attacking around a king
+	for (const auto &piece: black_pieces) { if (king_controlled & piece.attacks) { king_weakness -= piece.value; } }
+	// 2. check how open the king is (how long arms are from all 8 positions around the king)
+	while (king_controlled != 0) {
+		const int target_idx = __builtin_ctzll(king_controlled);
+		const sb target_pos = sb{1} << target_idx;
 
-	return eval;
+		for (const auto &arm: lookup_table.queen_table[target_idx]) {
+			const piece_data *hit_ptr = ray_cast_x1(arm, white_pieces[15]);
+
+			if (!hit_ptr) {
+				king_openness -= std::popcount(arm);
+				continue;
+			}
+
+			king_openness -= std::popcount(
+				between_table[sb_to_int(white_pieces[15].position)][sb_to_int(hit_ptr->position)] & ~white_pieces[15].
+				position);
+		}
+
+		king_controlled &= ~target_pos;
+	}
+
+	king_controlled = lookup_table.king_table[sb_to_int(black_pieces[15].position)][0];
+	// 1. count the value of pieces attacking around a king
+	for (const auto &piece: white_pieces) { if (king_controlled & piece.attacks) { king_weakness += piece.value; } }
+	// 2. check how open the king is (how long arms are from all 8 positions around the king)
+	while (king_controlled != 0) {
+		const int target_idx = __builtin_ctzll(king_controlled);
+		const sb target_pos = sb{1} << target_idx;
+
+		for (const auto &arm: lookup_table.queen_table[target_idx]) {
+			const piece_data *hit_ptr = ray_cast_x1(arm, black_pieces[15]);
+
+			if (!hit_ptr) {
+				king_openness += std::popcount(arm);
+				continue;
+			}
+
+			king_openness += std::popcount(
+				between_table[sb_to_int(white_pieces[15].position)][sb_to_int(hit_ptr->position)] & ~white_pieces[15].
+				position);
+		}
+
+		king_controlled &= ~target_pos;
+	}
+
+	// calculate structure
+
+	// calculate mobility diff (rough count of the number of moves each side can make)
+	int mobility_diff = std::popcount(side_attacks[static_cast<int>(piece_color::WHITE)]);
+	mobility_diff -= std::popcount(side_attacks[static_cast<int>(piece_color::BLACK)]);
+
+
+	// end game weights
+	constexpr float material_weight = 0.75f;
+	constexpr float king_weight = 0.15f;
+	constexpr float structure_weight = 0.8f;
+	constexpr float mobility_weight = 0.02f;
+	return material_weight * static_cast<float>(material_diff) + mobility_weight *
+	       static_cast<float>(mobility_diff);
 }
 
 sb game_data::get_valid_moves(const int pos, const lookup_tables &lookup_table, const between_tables &between_table) {

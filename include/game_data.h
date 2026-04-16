@@ -39,7 +39,7 @@ public:
 	[[nodiscard]] std::pair<sb *, sb *> get_boards(piece_color color);
 	[[nodiscard]] std::pair<std::array<piece_data, 16> *, std::array<piece_data, 16> *> get_pieces(piece_color color);
 
-	[[nodiscard]] int evaluate_position() const;
+	[[nodiscard]] float evaluate_position(const lookup_tables &lookup_table, const between_tables &between_table);
 
 	[[nodiscard]] sb get_valid_moves(int pos, const lookup_tables &lookup_table, const between_tables &between_table);
 	void move(int old_idx, int new_idx, const lookup_tables &lookup_table, const between_tables &between_table);

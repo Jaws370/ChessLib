@@ -35,26 +35,30 @@ struct piece_data {
 
 		switch (type) {
 			case piece_type::PAWN: {
-				value = 1;
+				value = 100;
 				break;
 			}
 			case piece_type::BISHOP: {
-				value = 3;
+				value = 310;
 				is_slider = true;
 				break;
 			}
 			case piece_type::KNIGHT: {
-				value = 3;
+				value = 300;
 				break;
 			}
 			case piece_type::ROOK: {
-				value = 5;
+				value = 500;
 				is_slider = true;
 				break;
 			}
 			case piece_type::QUEEN: {
-				value = 8;
+				value = 900;
 				is_slider = true;
+				break;
+			}
+			case piece_type::KING: {
+				value = 2000;
 				break;
 			}
 			default: break;

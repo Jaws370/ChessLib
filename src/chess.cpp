@@ -15,7 +15,10 @@ chess::chess(const std::string &fen): gd(fen, tables.lookup_table, tables.betwee
 }
 
 int chess::negamax(game_data pseudo_gd, const piece_color color, const int depth, int alpha, const int beta) {
-	if (depth == 0) { return (color == piece_color::WHITE ? 1 : -1) * pseudo_gd.evaluate_position(); }
+	if (depth == 0) {
+		return (color == piece_color::WHITE ? 1 : -1) * pseudo_gd.evaluate_position(
+			       tables.lookup_table, tables.between_table);
+	}
 
 	int max = INT_MIN;
 	sb own_board = color == piece_color::WHITE ? pseudo_gd.white_board : pseudo_gd.black_board;
